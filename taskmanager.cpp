@@ -6,7 +6,8 @@
 TaskManager* TaskManager::theTaskManager = 0;
 
 TaskManager::TaskManager(QObject* parent)
-    : QObject(parent), QMap<QString, Task*>()
+    : QObject(parent), QMap<QString, Task*>(),
+    m_activeTask(0)
 {
 }
 
@@ -49,3 +50,13 @@ void TaskManager::setElapsed(const QString& taskName, const int elapsed)
     emit taskChanged(t);
 }
 
+void TaskManager::setActiveTask(const QString& taskName)
+{
+    if (contains(taskName)) {
+        m_activeTask = value(taskName);
+        emit newActiveTask(m_activeTask);
+    } else {
+        qDebug() << "BLAD!, TaskManager::setActiveTask: brak zadania"
+                 << taskName;
+    }
+}
