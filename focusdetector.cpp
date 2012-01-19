@@ -1,12 +1,12 @@
 /* focusdetector.cpp */
-#include "mainwindow.h"
+#include "timedevel.h"
 #include "focusdetector.h"
 
 #include <X11/Xlib.h>
 #include <QDebug>
 
-FocusDetector::FocusDetector(MainWindow* mw)
-    : m_mw(mw)
+FocusDetector::FocusDetector(Timedevel* timedevelControler)
+    : m_mw(timedevelControler)
 {
 
 }

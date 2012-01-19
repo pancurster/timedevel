@@ -6,10 +6,20 @@ class QString;
 class Task;
 class WindowAttr;
 
+/**
+ * \class Task
+ * Klasa \a Task - podstawowa klasa przechowywujaca parametry
+ * uruchomionych programow i zadan. Agregowana przez klase
+ * \a TaskManager
+ */
 class Task {
     public:
         Task(WindowAttr* wa);
         Task(const QString taskName);
+        /** Tworzy nowa instancje klasy \a Task
+         * \param taskName nazwa zadania lub programu
+         * \param t_elapsed czas spedzony na zadaniu
+         */
         Task(const QString taskName, const int t_elapsed);
         ~Task();
 
@@ -17,7 +27,10 @@ class Task {
         QString getTaskName();
         /** Zwraca stala do atrybutow okna */
         const WindowAttr* getWAttr();
-        /** Zwraca true jesli zadanie podiada poprawny wskaznik m_wattr*/
+        /** Sprawdza czy obiekt posiada poprawne dane w \a WindowAttr 
+         * \return true jesli zadanie posiada poprawnie zainicjalizowany
+         * wskaznik m_wattr \a WindowAttr
+         */
         bool hasWAttr();
         /** Zwraca sumaryczny czas spedzony na zadaniu */
         int getElapsedTime();

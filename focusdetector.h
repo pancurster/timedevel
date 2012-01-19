@@ -5,15 +5,17 @@
 #include <QxtGui/QxtNativeEventFilter>
 #include <X11/Xlib.h>
 
+class Timedevel;
+
 class FocusDetector : public QxtNativeEventFilter {
     public:
-        FocusDetector(MainWindow* mw);
+        FocusDetector(Timedevel* mw);
         bool x11EventFilter(XEvent* event);
 
     private:
         void reportFocusChange();
 
-        MainWindow* m_mw;
+        Timedevel* m_mw;
 };
 
 #endif //FOCUSDETECTOR_H

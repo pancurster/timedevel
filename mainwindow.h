@@ -22,25 +22,19 @@ class MainWindow : public QMainWindow {
         MainWindow(QWidget* parent = 0);
         ~MainWindow();
 
-    public slots:
-        /** Odczytuje aktualnie aktywne okno i akutalizuje 
-         *  dane o aktywynym oknie w mainwidget */
-        void processFocusChange();
+        TaskView* getView();
 
+    public slots:
         /** Zapisuje do pliku liste zadan */
         void saveToFile();
 
         /** Odczytuke liste zadan z pliku */
         void readTaskListFile();
 
-        /** Ustawia model obslugi zadan */
-        void setTaskModelManager(TaskManager* manager);
-
     private:
-        int getActiveWId();
         void setUi();
 
-        TaskManager* m_taskManager;
+        //TaskManager* m_taskManager;
 
         /**** GUI ***/
 
