@@ -49,3 +49,15 @@ void TaskView::newActiveTask(Task* t)
     lastActiveTaskIndex = indexOfTopLevelItem(match[0]);
 }
 
+void TaskView::refreshElapsedTime(const QString& task, int newElapsedTime)
+{
+    qDebug() << "Wywolanie refreshElapsedTime" << task <<" "<<newElapsedTime;
+    QList<QTreeWidgetItem* > match = findItems(task, Qt::MatchExactly, 1);
+    if (match.isEmpty()) {
+        qDebug() << "BLAD!: refreshElapsedTime, nie znaleziono zadania"
+                 << task;
+        return;
+    }
+    match[0]->setText(4, QString::number(newElapsedTime/1000));
+}
+

@@ -17,6 +17,7 @@ class TaskView : public QTreeWidget {
     public slots:
         void addTaskView(Task* t);
         void newActiveTask(Task* t);
+        void refreshElapsedTime(const QString& task, int newElapsedTime);
 
     private:
         int countTaskView;

@@ -52,11 +52,23 @@ void TaskManager::setElapsed(const QString& taskName, const int elapsed)
 
 void TaskManager::setActiveTask(const QString& taskName)
 {
-    if (contains(taskName)) {
+    if (!isEmpty() && contains(taskName)) {
+        if (m_activeTask) {
+            m_activeTask->stopTimer();
+            emit taskElapsedTimeChanged(m_activeTask->getTaskName(),
+                                        m_activeTask->getElapsedTime());
+        }
+
         m_activeTask = value(taskName);
+        m_activeTask->startTimer();
         emit newActiveTask(m_activeTask);
     } else {
         qDebug() << "BLAD!, TaskManager::setActiveTask: brak zadania"
                  << taskName;
     }
+}
+
+Task* TaskManager::getActive()
+{
+    return m_activeTask;
 }

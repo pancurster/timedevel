@@ -25,18 +25,15 @@
 
 MainWindow::MainWindow(QWidget* parent):
     QMainWindow(parent),
-    m_taskInProgress(0)
+    m_taskManager(0)
 {
     qDebug() << "Konstruktor MainWindow";
-
-    m_topTasks = new QMap<int, Task*>;
 
     setUi();
 }
 
 MainWindow::~MainWindow()
 {
-    delete m_textedit;
 }
 
 void MainWindow::setTaskModelManager(TaskManager* manager)
@@ -45,9 +42,11 @@ void MainWindow::setTaskModelManager(TaskManager* manager)
         return;
     if (m_taskManager) {
         disconnect(m_taskManager, SIGNAL(taskAdded(Task*)),
-                    m_tViewTree, SLOT(addTaskView(Task*)));
+                   m_tViewTree, SLOT(addTaskView(Task*)));
         disconnect(m_taskManager, SIGNAL(newActiveTask(Task*)),
                    m_tViewTree, SLOT(newActiveTask(Task*)));
+        disconnect(m_taskManager, SIGNAL(taskElapsedTimeChanged(const QString&, int)),
+                   m_tViewTree, SLOT(refreshElapsedTime(const QString&, int)));
     }
 
     m_taskManager = manager;
@@ -56,6 +55,8 @@ void MainWindow::setTaskModelManager(TaskManager* manager)
                 m_tViewTree, SLOT(addTaskView(Task*)));
         connect(m_taskManager, SIGNAL(newActiveTask(Task*)),
                 m_tViewTree, SLOT(newActiveTask(Task*)));
+        connect(m_taskManager, SIGNAL(taskElapsedTimeChanged(const QString&, int)),
+                m_tViewTree, SLOT(refreshElapsedTime(const QString&, int)));
     }
 }
 
@@ -65,60 +66,24 @@ void MainWindow::processFocusChange()
     //int WId = getActiveWId();
 
     WindowAttr* wa = new WindowAttr;
-    int key_pid = wa->getPid();
     QString windowName = wa->getWName();
-
     Task* t = 0;
-    if (m_topTasks->contains(key_pid)) {    /* Jest na liscie */
-        if (m_taskInProgress->getWAttr()->getPid() != key_pid) {/*Zmiana zad.*/
-            m_taskInProgress->stopTimer();
-            m_taskInProgress = m_topTasks->value(key_pid);
+
+    if (!m_taskManager->isEmpty()
+        && m_taskManager->getActive()->getTaskName() == windowName) {
+        return;
+    } else {
+        if (m_taskManager->contains(windowName)) {
             m_taskManager->setActiveTask(windowName);
-            m_taskInProgress->startTimer();
-        }
-        /* Usuniecie wa powniewaz nie bedzie agregowany w m_topTasks */
-        delete wa;
-    } else {    /* Nowe zadanie */
-        if (m_taskInProgress)
-            m_taskInProgress->stopTimer();
-
-        t = new Task(wa);
-        m_topTasks->insert(wa->getPid(), t);
-        m_taskManager->add(t->getTaskName(), t);
-        m_taskInProgress = t;
-        m_taskInProgress->startTimer();
-    }
-    updateWidgetTaskList();
-
-    qDebug() << "Focus na oknie: " << windowName;
-}
-
-void MainWindow::updateWidgetTaskList()
-{
-    qDebug() << "Wywolanie MainWindow::updateWidgetTaskList";
-
-    m_textedit->clear();
-    QString task;
-    const WindowAttr* wa;
-    QMap<int, Task*>::iterator mi = m_topTasks->begin();
-
-    while (mi != m_topTasks->end()) {
-        wa = mi.value()->getWAttr();
-
-        if (wa != 0) {
-            task = QString("Okno: %1 ma WId: %2, PID: %3, aktywne sek.: %4")
-                    .arg(wa->getWName())
-                    .arg(QString::number(wa->getWId()))
-                    .arg(QString::number(wa->getPid()))
-                    .arg(QString::number(mi.value()->getElapsedTime()/1000));
         } else {
-            task = QString("Okno: %1, aktywne sek.: %2")
-                    .arg(mi.value()->getTaskName())
-                    .arg(mi.value()->getElapsedTime()/1000);
+            t = new Task(wa);
+            m_taskManager->add(windowName, t);
+            m_taskManager->setActiveTask(windowName);
+            return;
         }
-        m_textedit->append(task);
-        ++mi;
     }
+    delete wa;
+    qDebug() << "Focus na oknie: " << windowName;
 }
 
 int MainWindow::getActiveWId()
@@ -128,16 +93,20 @@ int MainWindow::getActiveWId()
 
 void MainWindow::saveToFile()
 {
+    /*
     TaskListWriter tlw(m_topTasks, "tasklist.xml");
     if (tlw.write())
         qDebug() << "Blad zapisu pliku";
+    */
 }
 
 void MainWindow::readTaskListFile()
 {
+    /*
     TaskListReader tlr(m_topTasks, "tasklist.xml");
     if (tlr.read())
         qDebug() << "Blad odczytu pliku";
+    */
 }
 
 void MainWindow::setUi()
@@ -150,13 +119,9 @@ void MainWindow::setUi()
     mainLayout = new QVBoxLayout;
     cw->setLayout(mainLayout);
 
-    m_textedit = new QTextEdit("Empty");
-    mainLayout->addWidget(m_textedit);
-    m_textedit->setFixedSize(600, 300);
-
     m_tViewTree = new TaskView;
     mainLayout->addWidget(m_tViewTree);
-    m_tViewTree->setFixedSize(600, 200);
+    m_tViewTree->setFixedSize(600, 300);
 
     buttonsLayout = new QHBoxLayout();
     mainLayout->addLayout(buttonsLayout);
@@ -177,8 +142,10 @@ void MainWindow::setUi()
     Q_ASSERT(ret);
     ret = connect(m_zapisz, SIGNAL(clicked()), this, SLOT(saveToFile()));
     Q_ASSERT(ret);
+    /*
     ret = connect(m_aktualizuj, SIGNAL(clicked()),
                     this, SLOT(updateWidgetTaskList()));
     Q_ASSERT(ret);
+    */
 }
 

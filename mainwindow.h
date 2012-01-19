@@ -27,9 +27,6 @@ class MainWindow : public QMainWindow {
          *  dane o aktywynym oknie w mainwidget */
         void processFocusChange();
 
-        /** Aktualizuje widget wyswietlajacy zadania */
-        void updateWidgetTaskList();
-
         /** Zapisuje do pliku liste zadan */
         void saveToFile();
 
@@ -43,14 +40,11 @@ class MainWindow : public QMainWindow {
         int getActiveWId();
         void setUi();
 
-        QMap<int, Task*>* m_topTasks;
-        Task* m_taskInProgress;
         TaskManager* m_taskManager;
 
         /**** GUI ***/
 
         QLabel* m_label;
-        QTextEdit* m_textedit;
         TaskView* m_tViewTree;
         QPushButton* m_aktualizuj, *m_zapisz, *m_zakoncz, *m_wczytaj;
 
