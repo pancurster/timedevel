@@ -3,15 +3,16 @@
 
 class Task;
 class QString;
+class TaskManager;
 
 class TaskListReader {
     public:
-        TaskListReader(QMap<int, Task*>*, QString);
+        TaskListReader(TaskManager*, QString);
 
         int read();
 
     private:
-        QMap<int, Task*>* m_readDest;
+        TaskManager* m_readDest;
         QString m_filename;
 };
 

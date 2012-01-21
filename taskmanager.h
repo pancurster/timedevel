@@ -21,6 +21,8 @@ class TaskManager : public QObject, public QMap<QString, Task*> {
         void remove(const QString& taskName);
         void setName(const QString& taskName, const QString& newName);
         void setElapsed(const QString& taskName, const int elapsed);
+        void writeToFile();
+        void readFromFile();
 
     signals:
         void taskAdded(Task*);
@@ -28,6 +30,8 @@ class TaskManager : public QObject, public QMap<QString, Task*> {
         void taskElapsedTimeChanged(const QString&, int);
         void taskChanged(Task*);
         void newActiveTask(Task *);
+        void writeDone(bool);
+        void readDone(bool);
 
     private:
         /** Obiekt konstruowany w getInstance() */

@@ -1,7 +1,9 @@
-//taskmanager.cpp
+/* taskmanager.cpp */
 #include <QDebug>
 
 #include "taskmanager.h"
+#include "tasklistwriter.h"
+#include "tasklistreader.h"
 
 TaskManager* TaskManager::theTaskManager = 0;
 
@@ -72,3 +74,19 @@ Task* TaskManager::getActive()
 {
     return m_activeTask;
 }
+
+/* TODO Dodac obsluge bledow. Wtedy parametr writeDone bedzie mial sens */
+void TaskManager::writeToFile()
+{
+    TaskListWriter taskWriter(this, "tasklist.xml");
+    if ( !taskWriter.write() )
+        emit writeDone(true);
+}
+
+void TaskManager::readFromFile()
+{
+    TaskListReader taskReader(this, "tasklist.xml");
+    if ( !taskReader.read() )
+        emit readDone(true);
+}
+

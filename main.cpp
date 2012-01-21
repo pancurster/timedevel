@@ -14,10 +14,10 @@ int main(int argc, char* argv[])
     /* Singleton TaskManager */
     TaskManager* tm = TaskManager::getInstance();
     /* controler-> setModel, setView */
-    Timedevel* taskControl = new Timedevel(tm, mainWindow->getView());
+    Timedevel* taskControl = new Timedevel(tm, mainWindow);
 
     /* detektor focusa */
-    FocusDetector* fdo = new FocusDetector(taskControl); 
+    FocusDetector* fdo = new FocusDetector(taskControl);
     timedevelapp.installNativeEventFilter(fdo);
 
     mainWindow->show();

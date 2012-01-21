@@ -7,13 +7,14 @@
 
 #include "task.h"
 #include "tasklistxmlhandler.h"
+#include "taskmanager.h"
 
 const QString TaskListXmlHandler::TOKEN_task_list ("task_list");
 const QString TaskListXmlHandler::TOKEN_task      ("task");
 const QString TaskListXmlHandler::TOKEN_name      ("name");
 const QString TaskListXmlHandler::TOKEN_t_elapsed ("time_elapsed");
 
-TaskListXmlHandler::TaskListXmlHandler(QMap<int, Task*>* tl) :
+TaskListXmlHandler::TaskListXmlHandler(TaskManager* tl) :
     m_taskList(tl), m_temp_task(0), m_temp_task_name(QString("")),
     m_temp_task_elapsed(0), m_task_counter(-1)
 {
@@ -105,9 +106,8 @@ bool TaskListXmlHandler::endElement( const QString& ,
 
         /* WSZYSTKO OK, dzialamy! */
         m_temp_task = new Task(m_temp_task_name, m_temp_task_elapsed);
-        m_taskList->insert(m_task_counter, m_temp_task);
+        m_taskList->add(m_temp_task_name, m_temp_task);
         m_temp_task = 0;
-        --m_task_counter;
     }
     return true;
 }

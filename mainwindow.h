@@ -3,12 +3,9 @@
 
 #include <QMainWindow>
 
-class QLabel;
-class QTextEdit;
 class Task;
-class TaskView;
-class TaskManager;
 
+class QTreeWidget;
 class QPushButton;
 class QVBoxLayout;
 class QHBoxLayout;
@@ -22,26 +19,28 @@ class MainWindow : public QMainWindow {
         MainWindow(QWidget* parent = 0);
         ~MainWindow();
 
-        TaskView* getView();
-
     public slots:
-        /** Zapisuje do pliku liste zadan */
-        void saveToFile();
-
         /** Odczytuke liste zadan z pliku */
         void readTaskListFile();
+
+        void addTask(Task* t);
+        void newActiveTask(Task* t);
+        void refreshElapsedTime(const QString& task, int newElapsedTime);
 
     private:
         void setUi();
 
-        //TaskManager* m_taskManager;
+        int countTaskView;
+        int lastActiveTaskIndex;
 
         /**** GUI ***/
 
-        QLabel* m_label;
-        TaskView* m_tViewTree;
+        /* Main widget */
+        QTreeWidget* m_taskView;
+
         QPushButton* m_aktualizuj, *m_zapisz, *m_zakoncz, *m_wczytaj;
 
+        /* Layouts */
         QVBoxLayout* mainLayout;
         QHBoxLayout* buttonsLayout;
         QGridLayout* glayout;

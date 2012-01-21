@@ -4,14 +4,14 @@
 #include <QObject>
 
 class TaskManager;
-class TaskView;
+class MainWindow;
 
 class Timedevel : public QObject {
 
     Q_OBJECT
 
     public:
-        Timedevel(TaskManager* tm, TaskView* view, QObject* parent = 0);
+        Timedevel(TaskManager* tm, MainWindow* view, QObject* parent = 0);
         ~Timedevel();
 
         /** Ustawia model danych */
@@ -20,7 +20,7 @@ class Timedevel : public QObject {
         /** Ustawia widok */
         //TODO Kontener? Kilka widokow? (Ma byc wyswietlanie 
         //statystyk jako grafiki.
-        void setTaskView(TaskView* taskviewer);
+        void setTaskView(MainWindow* taskviewer);
 
     public slots:
         /** Odczytuje aktualnie aktywne okno i akutalizuje 
@@ -34,7 +34,7 @@ class Timedevel : public QObject {
         /** MVC - model */
         TaskManager* m_taskManager;
         /** MVC - widok */
-        TaskView* m_tViewTree;
+        MainWindow* m_taskView;
 };
 
 #endif // TIMEDEVEL_H

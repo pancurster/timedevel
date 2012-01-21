@@ -10,7 +10,7 @@ class QXmlStreamWriter;
 
 class TaskListWriter {
     public:
-        TaskListWriter(QMap<int, Task*>*, QString);
+        TaskListWriter(QMap<QString, Task*>*, const QString);
 
         /**
          * Zapisuje do pliku mape zadan w formacie XML
@@ -18,7 +18,7 @@ class TaskListWriter {
         int write();
 
     private:
-        QMap<int, Task*>* m_tToWrite;
+        QMap<QString, Task*>* m_tToWrite;
         QString m_filename;
         QXmlStreamWriter* stream;
 };

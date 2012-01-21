@@ -8,12 +8,12 @@
 #include "timedevel.h"
 #include "windowattr.h"
 #include "task.h"
-#include "taskview.h"
+#include "mainwindow.h"
 #include "taskmanager.h"
 
-Timedevel::Timedevel(TaskManager* tm, TaskView* view, QObject* parent)
+Timedevel::Timedevel(TaskManager* tm, MainWindow* view, QObject* parent)
     : QObject(parent),
-      m_taskManager(0), m_tViewTree(view)
+      m_taskManager(0), m_taskView(view)
 {
     setTaskModel(tm);
 }
@@ -28,27 +28,27 @@ void Timedevel::setTaskModel(TaskManager* manager)
         return;
     if (m_taskManager) {
         disconnect(m_taskManager, SIGNAL(taskAdded(Task*)),
-                   m_tViewTree, SLOT(addTaskView(Task*)));
+                   m_taskView, SLOT(addTask(Task*)));
         disconnect(m_taskManager, SIGNAL(newActiveTask(Task*)),
-                   m_tViewTree, SLOT(newActiveTask(Task*)));
+                   m_taskView, SLOT(newActiveTask(Task*)));
         disconnect(m_taskManager, SIGNAL(taskElapsedTimeChanged(const QString&, int)),
-                   m_tViewTree, SLOT(refreshElapsedTime(const QString&, int)));
+                   m_taskView, SLOT(refreshElapsedTime(const QString&, int)));
     }
 
     m_taskManager = manager;
     if (m_taskManager) {
         connect(m_taskManager, SIGNAL(taskAdded(Task*)),
-                m_tViewTree, SLOT(addTaskView(Task*)));
+                m_taskView, SLOT(addTask(Task*)));
         connect(m_taskManager, SIGNAL(newActiveTask(Task*)),
-                m_tViewTree, SLOT(newActiveTask(Task*)));
+                m_taskView, SLOT(newActiveTask(Task*)));
         connect(m_taskManager, SIGNAL(taskElapsedTimeChanged(const QString&, int)),
-                m_tViewTree, SLOT(refreshElapsedTime(const QString&, int)));
+                m_taskView, SLOT(refreshElapsedTime(const QString&, int)));
     }
 }
 
-void Timedevel::setTaskView(TaskView* taskviewer)
+void Timedevel::setTaskView(MainWindow* taskviewer)
 {
-    m_tViewTree = taskviewer;
+    m_taskView= taskviewer;
 }
 
 void Timedevel::processFocusChange()

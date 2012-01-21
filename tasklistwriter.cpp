@@ -8,9 +8,9 @@
 #include "tasklistwriter.h"
 #include "task.h"
 
-TaskListWriter::TaskListWriter(QMap<int, Task*>* tasksToWrite,
-                                             QString filename): 
-                m_tToWrite(tasksToWrite), m_filename(filename)
+TaskListWriter::TaskListWriter(QMap<QString, Task*>* tasksToWrite,
+                               const QString filename)
+    : m_tToWrite(tasksToWrite), m_filename(filename)
 {
 }
 
@@ -29,7 +29,7 @@ int TaskListWriter::write()
     stream->writeStartDocument();
     stream->writeStartElement("task_list");
  
-    QMap<int, Task*>::iterator i = m_tToWrite->begin();
+    QMap<QString, Task*>::iterator i = m_tToWrite->begin();
     while (i != m_tToWrite->end()) {
         stream->writeStartElement("task");
         stream->writeTextElement("name", i.value()->getTaskName());

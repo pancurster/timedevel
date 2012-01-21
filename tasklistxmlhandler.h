@@ -4,12 +4,13 @@
 #include <QString>
 #include <QXmlDefaultHandler>
 class Task;
+class TaskManager;
 //class QString;
 
 /* TODO: Dodac poprawna obsluge bledow - klasy QXmlErrorHandler */
 class TaskListXmlHandler : public QXmlDefaultHandler {
     public:
-        TaskListXmlHandler(QMap<int, Task*>*);
+        TaskListXmlHandler(TaskManager*);
         bool startDocument();
         bool startElement( const QString& namespaceURI,
                            const QString& localName,
@@ -23,7 +24,7 @@ class TaskListXmlHandler : public QXmlDefaultHandler {
         bool fatalError(const QXmlParseException& exception);
     private:
         /* Wskaznik do agregatora zadan. Podawany przez klienta klasy */
-        QMap<int, Task*>* m_taskList;
+        TaskManager* m_taskList;
 
         /* Tymczasowy wskaznik na Task(zadanie). Podczas czytania pliku jest mu
          * przypisywana wartosc zmiennej Task alokowanej na stercie, nastepnie
