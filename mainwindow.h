@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QSystemTrayIcon>
 
 class Task;
 
@@ -10,6 +11,7 @@ class QPushButton;
 class QVBoxLayout;
 class QHBoxLayout;
 class QGridLayout;
+class QSystemTrayIcon;
 
 class MainWindow : public QMainWindow {
 
@@ -27,6 +29,8 @@ class MainWindow : public QMainWindow {
         void newActiveTask(Task* t);
         void refreshElapsedTime(const QString& task, int newElapsedTime);
 
+        void trayIconClicked(QSystemTrayIcon::ActivationReason reason);
+
     private:
         void setUi();
 
@@ -39,6 +43,7 @@ class MainWindow : public QMainWindow {
         QTreeWidget* m_taskView;
 
         QPushButton* m_aktualizuj, *m_zapisz, *m_zakoncz, *m_wczytaj;
+        QSystemTrayIcon* m_trayIcon;
 
         /* Layouts */
         QVBoxLayout* mainLayout;

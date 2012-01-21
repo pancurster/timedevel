@@ -60,10 +60,10 @@ void TaskManager::setActiveTask(const QString& taskName)
             emit taskElapsedTimeChanged(m_activeTask->getTaskName(),
                                         m_activeTask->getElapsedTime());
         }
-
         m_activeTask = value(taskName);
         m_activeTask->startTimer();
         emit newActiveTask(m_activeTask);
+
     } else {
         qDebug() << "BLAD!, TaskManager::setActiveTask: brak zadania"
                  << taskName;
@@ -86,6 +86,7 @@ void TaskManager::writeToFile()
 void TaskManager::readFromFile()
 {
     TaskListReader taskReader(this, "tasklist.xml");
+    this->clear();
     if ( !taskReader.read() )
         emit readDone(true);
 }

@@ -14,6 +14,8 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QGridLayout>
+#include <QSystemTrayIcon>
+#include <QIcon>
 
 #include <QxtGui/QxtWindowSystem>
 
@@ -85,6 +87,16 @@ void MainWindow::refreshElapsedTime(const QString& task, int newElapsedTime)
     match[0]->setText(4, QString::number(newElapsedTime/1000));
 }
 
+void MainWindow::trayIconClicked(QSystemTrayIcon::ActivationReason reason)
+{
+    if (reason == QSystemTrayIcon::Trigger) {
+        if (this->isHidden())
+            this->show();
+        else
+            this->hide();
+    }
+}
+
 void MainWindow::setUi()
 {
     setWindowTitle("TimeDevelop 0.1v");
@@ -114,15 +126,16 @@ void MainWindow::setUi()
     buttonsLayout->addWidget(m_wczytaj);
     buttonsLayout->addWidget(m_zakoncz);
 
-    bool ret;
-    ret = connect(m_zakoncz, SIGNAL(clicked()), qApp, SLOT(quit()));
-    Q_ASSERT(ret);
-    ret = connect(m_wczytaj, SIGNAL(clicked()),
+    m_trayIcon = new QSystemTrayIcon(QIcon("icon/icon64.png"));
+    m_trayIcon->show();
+
+    connect(m_zakoncz, SIGNAL(clicked()), qApp, SLOT(quit()));
+    connect(m_wczytaj, SIGNAL(clicked()),
             TaskManager::getInstance(), SLOT(readFromFile()));
-    Q_ASSERT(ret);
-    ret = connect(m_zapisz, SIGNAL(clicked()),
+    connect(m_zapisz, SIGNAL(clicked()),
             TaskManager::getInstance(), SLOT(writeToFile()));
-    Q_ASSERT(ret);
+    connect(m_trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+            this, SLOT(trayIconClicked(QSystemTrayIcon::ActivationReason)));
     /*
     ret = connect(m_aktualizuj, SIGNAL(clicked()),
                     this, SLOT(updateWidgetTaskList()));

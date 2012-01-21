@@ -25,7 +25,7 @@ Task::Task(const QString taskName):
     m_wattr(0),
     m_parentTask(0)
 {
-    m_time = new QTime;
+    m_time = new QTime(0,0,0,0);
 }
 
 Task::Task(const QString taskName, const int t_elapsed):
@@ -34,7 +34,7 @@ Task::Task(const QString taskName, const int t_elapsed):
     m_wattr(0),
     m_parentTask(0)
 {
-
+    m_time = new QTime(0,0,0,0);
 }
 
 Task::~Task()

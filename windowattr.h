@@ -25,7 +25,8 @@ class WindowAttr {
     private:
 
         /** Wywoluje polecenie systemowe i zwraca rezultat
-         * @param cmd - polecenie systemowe
+         * @param cmd polecenie systemowe do wykonania
+         * @return wynik dzialania polecenia \a cmd
          */
         QString exec(QString cmd);
 
