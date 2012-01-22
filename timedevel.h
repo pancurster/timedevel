@@ -5,13 +5,15 @@
 
 class TaskManager;
 class MainWindow;
+class FocusDetector;
 
 class Timedevel : public QObject {
 
     Q_OBJECT
 
     public:
-        Timedevel(TaskManager* tm, MainWindow* view, QObject* parent = 0);
+        Timedevel(TaskManager* tm, MainWindow* view,
+                  FocusDetector* fod, QObject* parent = 0);
         ~Timedevel();
 
         /** Ustawia model danych */
@@ -35,6 +37,8 @@ class Timedevel : public QObject {
         TaskManager* m_taskManager;
         /** MVC - widok */
         MainWindow* m_taskView;
+
+        FocusDetector* m_focusDetector;
 };
 
 #endif // TIMEDEVEL_H

@@ -10,10 +10,14 @@
 #include "task.h"
 #include "mainwindow.h"
 #include "taskmanager.h"
+#include "focusdetector.h"
 
-Timedevel::Timedevel(TaskManager* tm, MainWindow* view, QObject* parent)
+Timedevel::Timedevel(TaskManager* tm, MainWindow* view,
+                     FocusDetector* fdo, QObject* parent)
     : QObject(parent),
-      m_taskManager(0), m_taskView(view)
+      m_taskManager(0),
+      m_taskView(view),
+      m_focusDetector(fdo)
 {
     setTaskModel(tm);
 }
@@ -27,6 +31,8 @@ void Timedevel::setTaskModel(TaskManager* manager)
     if (m_taskManager == manager)
         return;
     if (m_taskManager) {
+        disconnect(m_focusDetector->signalHandle, SIGNAL(focusChanged()),
+                   this, SLOT(processFocusChange()));
         disconnect(m_taskManager, SIGNAL(taskAdded(Task*)),
                    m_taskView, SLOT(addTask(Task*)));
         disconnect(m_taskManager, SIGNAL(newActiveTask(Task*)),
@@ -37,6 +43,8 @@ void Timedevel::setTaskModel(TaskManager* manager)
 
     m_taskManager = manager;
     if (m_taskManager) {
+        connect(m_focusDetector->signalHandle, SIGNAL(focusChanged()),
+                this, SLOT(processFocusChange()));
         connect(m_taskManager, SIGNAL(taskAdded(Task*)),
                 m_taskView, SLOT(addTask(Task*)));
         connect(m_taskManager, SIGNAL(newActiveTask(Task*)),
