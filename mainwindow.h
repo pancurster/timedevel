@@ -22,9 +22,6 @@ class MainWindow : public QMainWindow {
         ~MainWindow();
 
     public slots:
-        /** Odczytuke liste zadan z pliku */
-        void readTaskListFile();
-
         void addTask(Task* t);
         void newActiveTask(Task* t);
         void refreshElapsedTime(const QString& task, int newElapsedTime);
@@ -33,6 +30,7 @@ class MainWindow : public QMainWindow {
 
     private:
         void setUi();
+        QString toMinSec(int counter, const QString spliter = ":");
 
         int countTaskView;
         int lastActiveTaskIndex;

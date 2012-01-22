@@ -38,20 +38,12 @@ MainWindow::~MainWindow()
 {
 }
 
-void MainWindow::readTaskListFile()
-{
-    /*
-    TaskListReader tlr(m_topTasks, "tasklist.xml");
-    if (tlr.read())
-        qDebug() << "Blad odczytu pliku";
-    */
-}
-
 void MainWindow::addTask(Task* t)
 {
     QTreeWidgetItem* item = new QTreeWidgetItem(m_taskView);
+    QString time = toMinSec(t->getElapsedTime());
     item->setText(1, t->getTaskName());
-    item->setText(4, QString::number(t->getElapsedTime()/1000));
+    item->setText(4, time);
     if (t->hasWAttr()) {
         const WindowAttr* wa = t->getWAttr();
         item->setText(2, QString::number(wa->getPid()));
@@ -84,7 +76,7 @@ void MainWindow::refreshElapsedTime(const QString& task, int newElapsedTime)
                  << task;
         return;
     }
-    match[0]->setText(4, QString::number(newElapsedTime/1000));
+    match[0]->setText(4, toMinSec(newElapsedTime));
 }
 
 void MainWindow::trayIconClicked(QSystemTrayIcon::ActivationReason reason)
@@ -141,5 +133,20 @@ void MainWindow::setUi()
                     this, SLOT(updateWidgetTaskList()));
     Q_ASSERT(ret);
     */
+}
+
+QString MainWindow::toMinSec(int wholeTime, const QString spliter)
+{
+    wholeTime /= 1000;
+    int hour= wholeTime / 3600;
+    wholeTime %= 3600;
+    int sec = wholeTime % 60;
+    int min = wholeTime / 60;
+    QString time = QString("%1%2%3%4%5")
+        .arg(hour).arg(spliter)
+        .arg(min, 2, 10, QChar('0')).arg(spliter)
+        .arg(sec, 2, 10, QChar('0'));
+
+    return time;
 }
 
