@@ -12,7 +12,8 @@ WindowAttr::WindowAttr(int WId) :
     m_WId(WId), m_PID(0)
 {
     findPid(WId);
-    findWName();
+    findWName(WId);
+    findAppName();
 }
 
 WindowAttr::WindowAttr() :
@@ -20,7 +21,8 @@ WindowAttr::WindowAttr() :
 {
     findActiveWindowWId();
     findPid(m_WId);
-    findWName();
+    findWName(m_WId);
+    findAppName();
 }
 
 QString WindowAttr::exec(QString cmd)
@@ -77,16 +79,34 @@ QString WindowAttr::getWName() const
     return m_WName;
 }
 
-void WindowAttr::findWName()
+QString WindowAttr::getAppName() const
+{
+    return m_AppName;
+}
+
+void WindowAttr::findWName(int WId)
+{
+    /* Prawdopodobnie WM_NAME jest najpewniejsze (wystepowalo jak do tej
+     * pory we wszystkich uruchamianych programach) */
+    QString cmd = QString("xprop -id %1 | grep WM_NAME\\(STRING\\)")
+                            .arg(WId);
+    m_WName = exec(cmd);
+    m_WName.remove(0, 19);                  // usuwanie 19 pierwszych znakow
+    m_WName.chop(2);                        // usuwanie 2 ostatnich znakow
+}
+
+void WindowAttr::findAppName()
 {
     if (m_WId == 0 || m_PID == 0)
         return; 
 
-    QString proc_file_name = QString("/proc/%1/cmdline").arg(m_PID);
+    QString proc_file_name = QString("/proc/%1/comm").arg(m_PID);
 
     QFile file(proc_file_name);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return; 
 
-    m_WName = file.readLine();
+    m_AppName = file.readLine();
+    m_AppName.chop(1);
 }
+

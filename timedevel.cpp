@@ -31,26 +31,46 @@ void Timedevel::setTaskModel(TaskManager* manager)
     if (m_taskManager == manager)
         return;
     if (m_taskManager) {
+        /* Wejscie z FocusDetector */
         disconnect(m_focusDetector->signalHandle, SIGNAL(focusChanged()),
                    this, SLOT(processFocusChange()));
+
+        /* Wejscie z Modelu */
         disconnect(m_taskManager, SIGNAL(taskAdded(Task*)),
                    m_taskView, SLOT(addTask(Task*)));
         disconnect(m_taskManager, SIGNAL(newActiveTask(Task*)),
                    m_taskView, SLOT(newActiveTask(Task*)));
         disconnect(m_taskManager, SIGNAL(taskElapsedTimeChanged(const QString&, int)),
                    m_taskView, SLOT(refreshElapsedTime(const QString&, int)));
+
+        /* Wejscie z Widoku */
+        connect(m_taskView, SIGNAL(zakonczClicked()), qApp, SLOT(quit()));
+        connect(m_taskView, SIGNAL(wczytajClicked()),
+                m_taskManager, SLOT(readFromFile()));
+        connect(m_taskView, SIGNAL(zapiszClicked()),
+                m_taskManager, SLOT(writeToFile()));
     }
 
     m_taskManager = manager;
     if (m_taskManager) {
+        /* Wejscie z FocusDetector */
         connect(m_focusDetector->signalHandle, SIGNAL(focusChanged()),
                 this, SLOT(processFocusChange()));
+
+        /* Wejscie z Modelu */
         connect(m_taskManager, SIGNAL(taskAdded(Task*)),
                 m_taskView, SLOT(addTask(Task*)));
         connect(m_taskManager, SIGNAL(newActiveTask(Task*)),
                 m_taskView, SLOT(newActiveTask(Task*)));
         connect(m_taskManager, SIGNAL(taskElapsedTimeChanged(const QString&, int)),
                 m_taskView, SLOT(refreshElapsedTime(const QString&, int)));
+
+        /* Wejscie z Widoku */
+        connect(m_taskView, SIGNAL(zakonczClicked()), qApp, SLOT(quit()));
+        connect(m_taskView, SIGNAL(wczytajClicked()),
+                m_taskManager, SLOT(readFromFile()));
+        connect(m_taskView, SIGNAL(zapiszClicked()),
+                m_taskManager, SLOT(writeToFile()));
     }
 }
 

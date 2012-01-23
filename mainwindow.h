@@ -28,14 +28,21 @@ class MainWindow : public QMainWindow {
 
         void trayIconClicked(QSystemTrayIcon::ActivationReason reason);
 
+    signals:
+        void zakonczClicked();
+        void wczytajClicked();
+        void zapiszClicked();
+
     private:
         void setUi();
         QString toMinSec(int counter, const QString spliter = ":");
 
         int countTaskView;
         int lastActiveTaskIndex;
+        enum {ACTIVE_C = 0, TASK_N_C = 1, APP_N_C = 2, ELAPS_C = 3,
+              PID_C = 4, WID_C = 5 } columnOrder;
 
-        /**** GUI ***/
+        /**** WIDGETS ***/
 
         /* Main widget */
         QTreeWidget* m_taskView;

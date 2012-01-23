@@ -19,8 +19,11 @@ class WindowAttr {
         /** Zwraca Pid procesu okna */
         int getPid() const;
 
-        /** Zwraca nazwe procesu okna */
+        /** Zwraca tytul okna */
         QString getWName() const;
+
+        /** Zwraca nazwe procesu okna */
+        QString getAppName() const;
 
     private:
 
@@ -37,11 +40,15 @@ class WindowAttr {
         void findPid(int WId);
 
         /** Uaktualnia pole m_WName */
-        void findWName();
+        void findWName(int WId);
+
+        /** Uaktualnia pole m_AppName */
+        void findAppName();
 
         int m_WId;
         int m_PID;
         QString m_WName;
+        QString m_AppName;
 };
 
 #endif // WINDOW_ATTR_H

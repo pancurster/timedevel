@@ -23,7 +23,6 @@
 #include "windowattr.h"
 #include "task.h"
 #include "tasklistreader.h"
-#include "taskmanager.h"
 
 MainWindow::MainWindow(QWidget* parent):
     QMainWindow(parent),
@@ -42,14 +41,16 @@ void MainWindow::addTask(Task* t)
 {
     QTreeWidgetItem* item = new QTreeWidgetItem(m_taskView);
     QString time = toMinSec(t->getElapsedTime());
-    item->setText(1, t->getTaskName());
-    item->setText(4, time);
+    item->setText(TASK_N_C, t->getTaskName());
+    item->setText(ELAPS_C, time);
     if (t->hasWAttr()) {
         const WindowAttr* wa = t->getWAttr();
-        item->setText(2, QString::number(wa->getPid()));
-        item->setText(3, QString::number(wa->getWId()));
+        item->setText(PID_C, QString::number(wa->getPid()));
+        item->setText(WID_C, QString::number(wa->getWId()));
+        item->setText(APP_N_C, wa->getAppName());
     }
     m_taskView->insertTopLevelItem(countTaskView, item);
+    m_taskView->resizeColumnToContents(1);
     ++countTaskView;
 
     qDebug() << "MainWindow::addTask: dodano zadanie do widoku";
@@ -61,8 +62,8 @@ void MainWindow::newActiveTask(Task* t)
                                                          Qt::MatchExactly, 1);
     if (match.isEmpty())
         return;
-    m_taskView->topLevelItem(lastActiveTaskIndex)->setText(0,"");
-    match[0]->setText(0, ">");
+    m_taskView->topLevelItem(lastActiveTaskIndex)->setText(ACTIVE_C,"");
+    match[0]->setText(ACTIVE_C, ">");
     lastActiveTaskIndex = m_taskView->indexOfTopLevelItem(match[0]);
 }
 
@@ -76,7 +77,7 @@ void MainWindow::refreshElapsedTime(const QString& task, int newElapsedTime)
                  << task;
         return;
     }
-    match[0]->setText(4, toMinSec(newElapsedTime));
+    match[0]->setText(ELAPS_C, toMinSec(newElapsedTime));
 }
 
 void MainWindow::trayIconClicked(QSystemTrayIcon::ActivationReason reason)
@@ -92,6 +93,7 @@ void MainWindow::trayIconClicked(QSystemTrayIcon::ActivationReason reason)
 void MainWindow::setUi()
 {
     setWindowTitle("TimeDevelop 0.1v");
+    this->resize(800,600);
 
     QWidget* cw = new QWidget;
     setCentralWidget(cw);
@@ -101,10 +103,17 @@ void MainWindow::setUi()
 
     m_taskView= new QTreeWidget;
     QStringList labels;
-    labels << "A" <<"Task name" << "Pid" << "X Window Id" << "Time elapsed";
+    labels <<""<<""<<""<<""<<""<<""; // :)
+    labels[ACTIVE_C] = QString("A");
+    labels[TASK_N_C] = QString("Task name");
+    labels[APP_N_C] = QString("Application name");
+    labels[ELAPS_C] = QString("Elapsed time");
+    labels[PID_C] = QString("Pid");
+    labels[WID_C] = QString("WId");
     m_taskView->setHeaderLabels(labels);
+    m_taskView->setColumnWidth(ACTIVE_C, 40);
+    m_taskView->setColumnWidth(TASK_N_C, 60);
     mainLayout->addWidget(m_taskView);
-    m_taskView->setFixedSize(600, 300);
 
     buttonsLayout = new QHBoxLayout();
     mainLayout->addLayout(buttonsLayout);
@@ -121,18 +130,11 @@ void MainWindow::setUi()
     m_trayIcon = new QSystemTrayIcon(QIcon("icon/icon64.png"));
     m_trayIcon->show();
 
-    connect(m_zakoncz, SIGNAL(clicked()), qApp, SLOT(quit()));
-    connect(m_wczytaj, SIGNAL(clicked()),
-            TaskManager::getInstance(), SLOT(readFromFile()));
-    connect(m_zapisz, SIGNAL(clicked()),
-            TaskManager::getInstance(), SLOT(writeToFile()));
+    connect(m_zakoncz, SIGNAL(clicked()), this, SIGNAL(zakonczClicked()));
+    connect(m_wczytaj, SIGNAL(clicked()), this, SIGNAL(wczytajClicked()));
+    connect(m_zapisz,  SIGNAL(clicked()), this, SIGNAL(zapiszClicked()));
     connect(m_trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
             this, SLOT(trayIconClicked(QSystemTrayIcon::ActivationReason)));
-    /*
-    ret = connect(m_aktualizuj, SIGNAL(clicked()),
-                    this, SLOT(updateWidgetTaskList()));
-    Q_ASSERT(ret);
-    */
 }
 
 QString MainWindow::toMinSec(int wholeTime, const QString spliter)
