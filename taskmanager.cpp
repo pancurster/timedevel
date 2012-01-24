@@ -4,6 +4,7 @@
 #include "taskmanager.h"
 #include "tasklistwriter.h"
 #include "tasklistreader.h"
+#include "windowattr.h"
 
 TaskManager* TaskManager::theTaskManager = 0;
 
@@ -28,8 +29,33 @@ TaskManager* TaskManager::getInstance()
 
 void TaskManager::add(const QString& key, Task* t)
 {
+    if ( ! t->hasParent()) {
+        trySetParent(t);
+    }
     insert(key, t);
+    qDebug() <<"Dodano zadanie: "<<t->getTaskName();
     emit taskAdded(t);
+}
+
+void TaskManager::trySetParent(Task* t)
+{
+    if (!t->hasWAttr())
+        return;
+    QString app_name = t->getWAttr()->getAppName();
+    QMap<QString, Task*>::iterator i = this->begin();
+    while (i != this->end()) {
+        if (i.value()->getWAttr()->getAppName() == app_name) {
+            t->setParent(i.value());
+
+            qDebug()<<"Zadanie: "<<t->getTaskName()<<" ma rodzica: "
+                    <<i.value()->getTaskName();
+        }
+        ++i;
+    }
+    /*
+     * Moze lepszym rozwiazeniem jest zrobienie mapy z nazwa programu
+     * jako kluczem?
+     */
 }
 
 void TaskManager::remove(const QString& taskName)

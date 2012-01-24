@@ -87,6 +87,21 @@ void Task::setName(const QString& taskName)
     m_taskName = taskName;
 }
 
+void Task::setParent(Task* t)
+{
+    m_parentTask = t;
+}
+
+Task* Task::getParent()
+{
+    return m_parentTask ? m_parentTask : this;
+}
+
+bool Task::hasParent()
+{
+    return m_parentTask ? true : false;
+}
+
 void Task::setElapsed(int elapsed)
 {
     m_elapsed = elapsed;

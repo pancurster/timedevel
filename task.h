@@ -44,6 +44,12 @@ class Task {
         void setName(const QString& taskName);
         /** Ustawia czas spedzony na zadaniu */
         void setElapsed(int elapsed);
+        /** Ustawia parent task zadania */
+        void setParent(Task* t);
+        /** Zwraca paretn task zadania */
+        Task* getParent();
+        /** Czy zadania ma rodzica? */
+        bool hasParent();
 
     private:
         QString m_taskName;

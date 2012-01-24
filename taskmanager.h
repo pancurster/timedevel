@@ -36,6 +36,8 @@ class TaskManager : public QObject, public QMap<QString, Task*> {
     private:
         /** Obiekt konstruowany w getInstance() */
         TaskManager(QObject* parent = 0);
+        /** Ustawia rodzica zadania t */
+        void trySetParent(Task* t);
 
         /** Singleton */
         static TaskManager* theTaskManager;

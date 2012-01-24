@@ -33,7 +33,7 @@ int TaskListWriter::write()
     while (i != m_tToWrite->end()) {
         stream->writeStartElement("task");
         stream->writeTextElement("name", i.value()->getTaskName());
-        //stream->writeAttribute("type", "TO_DO");
+        stream->writeTextElement("parent", i.value()->getParent()->getTaskName());
         stream->writeTextElement("time_elapsed", 
                                  i.value()->getElapsedTimeString());
         stream->writeEndElement();

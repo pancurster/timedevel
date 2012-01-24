@@ -26,7 +26,7 @@
 
 MainWindow::MainWindow(QWidget* parent):
     QMainWindow(parent),
-    countTaskView(0), lastActiveTaskIndex(0)
+    lastActiveTaskIndex(0)
 {
     qDebug() << "Konstruktor MainWindow";
 
@@ -39,19 +39,37 @@ MainWindow::~MainWindow()
 
 void MainWindow::addTask(Task* t)
 {
-    QTreeWidgetItem* item = new QTreeWidgetItem(m_taskView);
+    QTreeWidgetItem* item = 0;
+    QList<QTreeWidgetItem*> result;
+
+    if (t->hasParent()) {
+        result = m_taskView->findItems(t->getParent()->getTaskName(),
+                                        Qt::MatchExactly, TASK_N_C);
+        if (!result.isEmpty())
+            item = new QTreeWidgetItem(result[0]);
+    } else {
+        item = new QTreeWidgetItem(m_taskView);
+    }
+
     QString time = toMinSec(t->getElapsedTime());
     item->setText(TASK_N_C, t->getTaskName());
     item->setText(ELAPS_C, time);
+
     if (t->hasWAttr()) {
         const WindowAttr* wa = t->getWAttr();
         item->setText(PID_C, QString::number(wa->getPid()));
         item->setText(WID_C, QString::number(wa->getWId()));
         item->setText(APP_N_C, wa->getAppName());
     }
-    m_taskView->insertTopLevelItem(countTaskView, item);
-    m_taskView->resizeColumnToContents(1);
-    ++countTaskView;
+
+    if (t->hasParent() && !result.isEmpty()) {
+        result[0]->addChild(item);
+    } else {
+        item->setChildIndicatorPolicy(
+                        QTreeWidgetItem::DontShowIndicatorWhenChildless);
+        m_taskView->insertTopLevelItem(m_taskView->topLevelItemCount(), item);
+        m_taskView->resizeColumnToContents(1);
+    }
 
     qDebug() << "MainWindow::addTask: dodano zadanie do widoku";
 }
