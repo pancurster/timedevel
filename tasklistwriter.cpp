@@ -27,6 +27,7 @@ int TaskListWriter::write()
 
     stream->setAutoFormatting(true);
     stream->writeStartDocument();
+    stream->writeStartElement("timedevel_task_list");
 
     stream->writeStartElement("top_task");
     QMap<QString, Task*>::iterator i = m_tToWrite->begin();
@@ -37,6 +38,7 @@ int TaskListWriter::write()
         }
         stream->writeStartElement("task");
         stream->writeTextElement("name", i.value()->getTaskName());
+        stream->writeTextElement("app_name", i.value()->getAppName());
         stream->writeTextElement("parent", "None"); 
         stream->writeTextElement("time_elapsed", 
                                  i.value()->getElapsedTimeString());
@@ -54,12 +56,15 @@ int TaskListWriter::write()
         }
         stream->writeStartElement("task");
         stream->writeTextElement("name", i.value()->getTaskName());
+        stream->writeTextElement("app_name", i.value()->getAppName());
         stream->writeTextElement("parent", i.value()->getParent()->getTaskName());
         stream->writeTextElement("time_elapsed", 
                                  i.value()->getElapsedTimeString());
         stream->writeEndElement();
         ++i;
     }
+    stream->writeEndElement();
+
     stream->writeEndElement();
     stream->writeEndDocument();
 

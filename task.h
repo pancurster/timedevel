@@ -44,11 +44,13 @@ class Task {
         bool hasWAttr();
 
         // SETERS
+        /** Ustawia nzwe aplikacji powiazanej z zadaniem */
+        void setAppName(const QString& appName);
         /** Ustawia czas spedzony na zadaniu */
         void setElapsed(int elapsed);
         /** Ustawie nazwe zadania */
         void setName(const QString& taskName);
-        /** Ustawia parent task zadania */
+        /** Ustawia rodzica zadania na t */
         void setParent(Task* t);
         /** Zaczyna zliczanie czasu dla zadania */
         void startTimer();

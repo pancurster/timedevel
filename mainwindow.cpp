@@ -54,12 +54,12 @@ void MainWindow::addTask(Task* t)
     QString time = toMinSec(t->getElapsedTime());
     item->setText(TASK_N_C, t->getTaskName());
     item->setText(ELAPS_C, time);
+    item->setText(APP_N_C, t->getAppName());
 
     if (t->hasWAttr()) {
         const WindowAttr* wa = t->getWAttr();
         item->setText(PID_C, QString::number(wa->getPid()));
         item->setText(WID_C, QString::number(wa->getWId()));
-        item->setText(APP_N_C, wa->getAppName());
     }
 
     if (t->hasParent() && !result.isEmpty()) {

@@ -86,6 +86,11 @@ bool Task::hasWAttr()
     return m_wattr ? true : false;
 }
 
+void Task::setAppName(const QString& appName)
+{
+    m_appName = appName;
+}
+
 void Task::setName(const QString& taskName)
 {
     m_taskName = taskName;

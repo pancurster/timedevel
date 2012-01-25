@@ -39,8 +39,6 @@ void TaskManager::add(const QString& key, Task* t)
 
 void TaskManager::trySetParent(Task* t)
 {
-    if ( !t->hasWAttr())
-        return;
     QString app_name = t->getAppName();
     QMap<QString, Task*>::iterator i = this->begin();
     while (i != this->end()) {

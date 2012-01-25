@@ -5,7 +5,6 @@
 #include <QXmlDefaultHandler>
 class Task;
 class TaskManager;
-//class QString;
 
 /* TODO: Dodac poprawna obsluge bledow - klasy QXmlErrorHandler */
 class TaskListXmlHandler : public QXmlDefaultHandler {
@@ -23,6 +22,7 @@ class TaskListXmlHandler : public QXmlDefaultHandler {
 
         bool fatalError(const QXmlParseException& exception);
     private:
+        bool isDataCorrect();
         /* Wskaznik do agregatora zadan. Podawany przez klienta klasy */
         TaskManager* m_taskList;
 
@@ -34,8 +34,15 @@ class TaskListXmlHandler : public QXmlDefaultHandler {
         /* Tymczasowa wartosc przechowywujaca nazwe zadania */
         QString m_temp_task_name;
 
+        /** Tymczasowa wartosc przechowywujaca nazwe aplikacji powiazanej
+         * z danym zadaniem */
+        QString m_temp_task_app_name;
+
         /* Tymczasowa wartosc przechowywujaca czas spedzony na zadaniu */
         int m_temp_task_elapsed;
+
+        /** Rodzic zadania */
+        QString m_temp_task_parent;
 
         /* Przechowuje liczbe odczytanych zadan. Poniewaz nie znane sa 
          * PIDy zadan oraz za kazdym uruchomieniem, PID zadania zmienia sie,
@@ -45,17 +52,23 @@ class TaskListXmlHandler : public QXmlDefaultHandler {
         int m_task_counter;
 
         /* Wszystkie mozliwe tokeny w xmlu */
-        static const QString TOKEN_task_list;
+        static const QString TOKEN_top_task;
+        static const QString TOKEN_child_task;
         static const QString TOKEN_task;
         static const QString TOKEN_name;
+        static const QString TOKEN_app_name;
+        static const QString TOKEN_parent;
         static const QString TOKEN_t_elapsed;
 
         /* Sluzy do rozpoznawania aktualnie parsowanego tokenu */
         enum token_t { UNKNOWN = -1,
                        DOC_START,
-                       TASK_LIST, 
+                       TOP_TASK, 
+                       CHILD_TASK,
                        TASK, 
                        NAME, 
+                       APP_NAME,
+                       PARENT,
                        T_ELAPSED } actual_token;
         
 };
