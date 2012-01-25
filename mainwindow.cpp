@@ -26,10 +26,10 @@
 
 MainWindow::MainWindow(QWidget* parent):
     QMainWindow(parent),
+    m_activeItem(0),
     lastActiveTaskIndex(0)
 {
     qDebug() << "Konstruktor MainWindow";
-
     setUi();
 }
 
@@ -74,28 +74,61 @@ void MainWindow::addTask(Task* t)
     qDebug() << "MainWindow::addTask: dodano zadanie do widoku";
 }
 
+QTreeWidgetItem* MainWindow::findItem(const QString& tName)
+{
+    QTreeWidgetItem* top;
+    QTreeWidgetItem* child;
+    for (int t = 0; t < m_taskView->topLevelItemCount(); ++t) {
+        top = m_taskView->topLevelItem(t);
+        if (tName == top->text(TASK_N_C)) {
+            return top;
+        } else if (top->childCount() > 0) {
+            for (int c = 0; c < top->childCount(); ++c) {
+                child = top->child(c);
+                if (tName == child->text(TASK_N_C))
+                    return child;
+            }
+        }
+    }
+    return 0;
+}
+
+QTreeWidgetItem* MainWindow::findItem(Task* t)
+{
+    return findItem(t->getTaskName());
+}
+
 void MainWindow::newActiveTask(Task* t)
 {
-    QList<QTreeWidgetItem* > match = m_taskView->findItems(t->getTaskName(),
-                                                         Qt::MatchExactly, 1);
-    if (match.isEmpty())
+    QTreeWidgetItem* result = findItem(t);
+    if (!result) {
+        qDebug() <<"newActiveTask: nie znaleziono zadania "<<t->getTaskName();
         return;
-    m_taskView->topLevelItem(lastActiveTaskIndex)->setText(ACTIVE_C,"");
-    match[0]->setText(ACTIVE_C, ">");
-    lastActiveTaskIndex = m_taskView->indexOfTopLevelItem(match[0]);
+    }
+
+    QFont font;
+    if (m_activeItem) {
+        font = m_activeItem->font(TASK_N_C);
+        font.setBold(false);
+        m_activeItem->setFont(TASK_N_C, font);
+    }
+
+    font = result->font(TASK_N_C);
+    font.setBold(true);
+    result->setFont(TASK_N_C, font);
+    m_activeItem = result;
 }
 
 void MainWindow::refreshElapsedTime(const QString& task, int newElapsedTime)
 {
     qDebug() << "Wywolanie refreshElapsedTime" << task <<" "<<newElapsedTime;
-    QList<QTreeWidgetItem* > match = m_taskView->findItems(task,
-                                                          Qt::MatchExactly, 1);
-    if (match.isEmpty()) {
+    QTreeWidgetItem* result = findItem(task);
+    if (!result) {
         qDebug() << "BLAD!: refreshElapsedTime, nie znaleziono zadania"
                  << task;
         return;
     }
-    match[0]->setText(ELAPS_C, toMinSec(newElapsedTime));
+    result->setText(ELAPS_C, toMinSec(newElapsedTime));
 }
 
 void MainWindow::trayIconClicked(QSystemTrayIcon::ActivationReason reason)

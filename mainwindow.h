@@ -12,6 +12,7 @@ class QVBoxLayout;
 class QHBoxLayout;
 class QGridLayout;
 class QSystemTrayIcon;
+class QTreeWidgetItem;
 
 class MainWindow : public QMainWindow {
 
@@ -35,8 +36,11 @@ class MainWindow : public QMainWindow {
 
     private:
         void setUi();
+        QTreeWidgetItem* findItem(const QString& tName);
+        QTreeWidgetItem* findItem(Task* t);
         QString toMinSec(int counter, const QString spliter = ":");
 
+        QTreeWidgetItem* m_activeItem;
         int lastActiveTaskIndex;
         enum {ACTIVE_C, TASK_N_C, APP_N_C, ELAPS_C,
               PID_C, WID_C} columnOrder;
@@ -57,3 +61,4 @@ class MainWindow : public QMainWindow {
 };
 
 #endif // MAINWINDOW_H
+
