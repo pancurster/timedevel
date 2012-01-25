@@ -9,6 +9,7 @@
 Task::Task(WindowAttr* wa):
     /* W tym przypadku nazwa zadania to nazwa okna */
     m_taskName(wa->getWName()),
+    m_appName(wa->getAppName()),
     m_elapsed(0),
 
     /* Zero jesli to jest top level task */
@@ -21,6 +22,7 @@ Task::Task(WindowAttr* wa):
 
 Task::Task(const QString taskName):
     m_taskName(taskName),
+    m_appName(""),
     m_elapsed(0),
     m_wattr(0),
     m_parentTask(0)
@@ -30,6 +32,7 @@ Task::Task(const QString taskName):
 
 Task::Task(const QString taskName, const int t_elapsed):
     m_taskName(taskName),
+    m_appName(""),
     m_elapsed(t_elapsed),
     m_wattr(0),
     m_parentTask(0)
@@ -41,6 +44,11 @@ Task::~Task()
 {
     delete m_wattr;
     delete m_time;
+}
+
+QString Task::getAppName()
+{
+    return m_appName;
 }
 
 const WindowAttr* Task::getWAttr()
@@ -60,7 +68,6 @@ int Task::getElapsedTime()
 
 QString Task::getElapsedTimeString()
 {
-    //m_elapsed += m_time->elapsed();
     return QString::number(m_elapsed);
 }
 
@@ -76,10 +83,7 @@ void Task::stopTimer()
 
 bool Task::hasWAttr()
 {
-    if (m_wattr)
-        return true;
-    else
-        return false;
+    return m_wattr ? true : false;
 }
 
 void Task::setName(const QString& taskName)

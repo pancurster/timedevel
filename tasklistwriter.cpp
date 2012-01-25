@@ -27,10 +27,31 @@ int TaskListWriter::write()
 
     stream->setAutoFormatting(true);
     stream->writeStartDocument();
-    stream->writeStartElement("task_list");
- 
+
+    stream->writeStartElement("top_task");
     QMap<QString, Task*>::iterator i = m_tToWrite->begin();
     while (i != m_tToWrite->end()) {
+        if (i.value()->hasParent()) {
+            ++i;
+            continue;
+        }
+        stream->writeStartElement("task");
+        stream->writeTextElement("name", i.value()->getTaskName());
+        stream->writeTextElement("parent", "None"); 
+        stream->writeTextElement("time_elapsed", 
+                                 i.value()->getElapsedTimeString());
+        stream->writeEndElement();
+        ++i;
+    }
+    stream->writeEndElement();
+
+    stream->writeStartElement("child_task");
+    i = m_tToWrite->begin();
+    while (i != m_tToWrite->end()) {
+        if (! i.value()->hasParent()) {
+            ++i;
+            continue;
+        }
         stream->writeStartElement("task");
         stream->writeTextElement("name", i.value()->getTaskName());
         stream->writeTextElement("parent", i.value()->getParent()->getTaskName());
@@ -39,7 +60,7 @@ int TaskListWriter::write()
         stream->writeEndElement();
         ++i;
     }
-    stream->writeEndElement(); //task_list
+    stream->writeEndElement();
     stream->writeEndDocument();
 
     /* IN Version 4.8 Qt
@@ -49,3 +70,4 @@ int TaskListWriter::write()
     qDebug() << "Zakonczono dzialanie tasklistwriter::write sukcesem";
     return 0;
 }
+

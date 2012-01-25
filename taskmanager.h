@@ -36,7 +36,11 @@ class TaskManager : public QObject, public QMap<QString, Task*> {
     private:
         /** Obiekt konstruowany w getInstance() */
         TaskManager(QObject* parent = 0);
-        /** Ustawia rodzica zadania t */
+
+        /** Probuje znalezc (w istniejacych zadaniach) i ustawic rodzica
+         * zadania. Funkcja powinna byc wywolywane kiedy zadanie nie ma 
+         * jeszcze rodzica (najczesciej wystepuje przy wykryciu nowego programu).
+         */
         void trySetParent(Task* t);
 
         /** Singleton */

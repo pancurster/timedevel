@@ -39,16 +39,17 @@ void TaskManager::add(const QString& key, Task* t)
 
 void TaskManager::trySetParent(Task* t)
 {
-    if (!t->hasWAttr())
+    if ( !t->hasWAttr())
         return;
-    QString app_name = t->getWAttr()->getAppName();
+    QString app_name = t->getAppName();
     QMap<QString, Task*>::iterator i = this->begin();
     while (i != this->end()) {
-        if (i.value()->getWAttr()->getAppName() == app_name) {
+        if (i.value()->getAppName() == app_name && !i.value()->hasParent()) {
             t->setParent(i.value());
 
             qDebug()<<"Zadanie: "<<t->getTaskName()<<" ma rodzica: "
                     <<i.value()->getTaskName();
+            break; // Sukces! Dalej nie szukamy.
         }
         ++i;
     }

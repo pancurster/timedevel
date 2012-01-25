@@ -23,39 +23,43 @@ class Task {
         Task(const QString taskName, const int t_elapsed);
         ~Task();
 
-        /** Zwraca nazwe zadania */
-        QString getTaskName();
-        /** Zwraca stala do atrybutow okna */
-        const WindowAttr* getWAttr();
-        /** Sprawdza czy obiekt posiada poprawne dane w \a WindowAttr 
-         * \return true jesli zadanie posiada poprawnie zainicjalizowany
-         * wskaznik m_wattr \a WindowAttr
-         */
-        bool hasWAttr();
+        // GETERS
+        /** Zwraca nazwe aplikacji z ktora powiazane jest zadanie */
+        QString getAppName();
         /** Zwraca sumaryczny czas spedzony na zadaniu */
         int getElapsedTime();
         /** Zwraca sumaryczny czas spedzony na zadaniu jako QString */
         QString getElapsedTimeString();
+        /** Zwraca paretn task zadania */
+        Task* getParent();
+        /** Zwraca nazwe zadania */
+        QString getTaskName();
+        /** Zwraca stala do atrybutow okna */
+        const WindowAttr* getWAttr();
+
+        // INFO
+        /** Czy zadania ma rodzica? */
+        bool hasParent();
+        /** Sprawdza czy obiekt posiada poprawne dane w \a WindowAttr */
+        bool hasWAttr();
+
+        // SETERS
+        /** Ustawia czas spedzony na zadaniu */
+        void setElapsed(int elapsed);
+        /** Ustawie nazwe zadania */
+        void setName(const QString& taskName);
+        /** Ustawia parent task zadania */
+        void setParent(Task* t);
         /** Zaczyna zliczanie czasu dla zadania */
         void startTimer();
         /** Zatrzymuje zliczanie czasu */
         void stopTimer();
-        /** Ustawie nazwe zadania */
-        void setName(const QString& taskName);
-        /** Ustawia czas spedzony na zadaniu */
-        void setElapsed(int elapsed);
-        /** Ustawia parent task zadania */
-        void setParent(Task* t);
-        /** Zwraca paretn task zadania */
-        Task* getParent();
-        /** Czy zadania ma rodzica? */
-        bool hasParent();
 
     private:
         QString m_taskName;
-        QTime* m_time;
+        QString m_appName;
         int m_elapsed;
-        //QString m_elapsed;
+        QTime* m_time;
 
         WindowAttr* m_wattr;
         Task* m_parentTask;
