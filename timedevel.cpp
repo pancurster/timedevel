@@ -91,9 +91,9 @@ void Timedevel::processFocusChange()
     QString windowName = wa->getWName();
     Task* t = 0;
 
-    if (!m_taskManager->isEmpty()
-        && m_taskManager->getActive() != 0
-        && m_taskManager->getActive()->getTaskName() == windowName) {
+    if (!m_taskManager->isEmpty() &&
+        m_taskManager->getActive() != 0 &&
+        m_taskManager->getActive()->getTaskName() == windowName) {
         return;
     } else {
         if (m_taskManager->contains(windowName)) {

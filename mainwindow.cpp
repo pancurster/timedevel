@@ -155,7 +155,7 @@ void MainWindow::setUi()
     m_taskView= new QTreeWidget;
     QStringList labels;
     labels <<""<<""<<""<<""<<""<<""; // :)
-    labels[ACTIVE_C] = QString("A");
+    labels[ACTIVE_C] = QString("");
     labels[TASK_N_C] = QString("Task name");
     labels[APP_N_C] = QString("Application name");
     labels[ELAPS_C] = QString("Elapsed time");

@@ -8,9 +8,9 @@
 #include "tasklistwriter.h"
 #include "task.h"
 
-TaskListWriter::TaskListWriter(QMap<QString, Task*>* tasksToWrite,
+TaskListWriter::TaskListWriter(QMap<QString, Task*>* taskToWrite,
                                const QString filename)
-    : m_tToWrite(tasksToWrite), m_filename(filename)
+    : m_tToWrite(taskToWrite), m_filename(filename)
 {
 }
 

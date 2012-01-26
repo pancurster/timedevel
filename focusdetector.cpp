@@ -1,10 +1,11 @@
 /* focusdetector.cpp */
+#include <QDebug>
+
 #include "timedevel.h"
 #include "focusdetector.h"
 #include "focussignal.h"
 
 #include <X11/Xlib.h>
-#include <QDebug>
 
 FocusDetector::FocusDetector() : signalHandle(new FocusSignal)
 {
@@ -18,11 +19,9 @@ FocusDetector::~FocusDetector()
 
 bool FocusDetector::x11EventFilter(XEvent* event)
 {
-    if (   event->type == EnterNotify
-        || event->type == MapNotify
-        || event->type == VisibilityNotify
-        /*|| event->type == Expose*/ // dziwnie duzo zdarzen
-        || event->type == ButtonPress) {
+    if (event->type == EnterNotify ||
+        event->type == MapNotify ||
+        event->type == VisibilityNotify) {
         reportFocusChange();
         return true;
     } else {
@@ -30,7 +29,7 @@ bool FocusDetector::x11EventFilter(XEvent* event)
     }
 }
 
-void FocusDetector::reportFocusChange()
+void FocusDetector::reportFocusChange() const
 {
     qDebug() << "Zmieniono focus";
     signalHandle->emitFocusChanged();

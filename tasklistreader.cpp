@@ -10,8 +10,8 @@
 #include "tasklistreader.h"
 #include "tasklistxmlhandler.h"
 
-TaskListReader::TaskListReader(TaskManager* tl, QString filename) :
-    m_readDest(tl), m_filename(QString(filename))
+TaskListReader::TaskListReader(TaskManager* tm, QString filename) :
+    m_readDest(tm), m_filename(QString(filename))
 {
 }
 
@@ -21,6 +21,7 @@ int TaskListReader::read()
 
     QXmlSimpleReader reader;
     reader.setContentHandler( &handler );
+    // Ignoruje znaki spacji, tabulacji itd.
     reader.setFeature("http://trolltech.com/xml/features/report-"
                       "whitespace-only-CharData", 
                       false);

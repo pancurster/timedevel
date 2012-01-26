@@ -14,11 +14,19 @@ class WindowAttr;
  */
 class Task {
     public:
+        /** Tworzy zadanie tylko na podstawie atrybutów okna */
         Task(WindowAttr* wa);
+
+        /** Kontruktor urzywany do tworzenia pustego zadania.
+         * Zadanie stworzone przez ten konstruktor nie ma powiązania z żadną
+         * aplikacją. 
+         * @param taskName nazwa zadania.
+         */
         Task(const QString taskName);
+
         /** Tworzy nowa instancje klasy \a Task
-         * \param taskName nazwa zadania lub programu
-         * \param t_elapsed czas spedzony na zadaniu
+         * @param taskName nazwa zadania lub programu
+         * @param t_elapsed czas spedzony na zadaniu
          */
         Task(const QString taskName, const int t_elapsed);
         ~Task();
@@ -38,19 +46,33 @@ class Task {
         const WindowAttr* getWAttr();
 
         // INFO
-        /** Czy zadania ma rodzica? */
+        /** Czy zadania ma rodzica? 
+         * @return true jestli zadanie ma poprawnie ustawionego rodzica
+         * @see m_parentTask.
+         */
         bool hasParent();
-        /** Sprawdza czy obiekt posiada poprawne dane w \a WindowAttr */
+        /** Sprawdza czy obiekt posiada poprawne dane w \a WindowAttr 
+         * @return true jeśli zadanie ma poprawnie ustawiony wskaźnik na
+         * atrybuty okna.
+         */
         bool hasWAttr();
 
         // SETERS
-        /** Ustawia nzwe aplikacji powiazanej z zadaniem */
+        /** Ustawia nzwe aplikacji powiazanej z zadaniem 
+         * @param appName nazwa aplikacji powiazanej z zadaniem.
+         */
         void setAppName(const QString& appName);
-        /** Ustawia czas spedzony na zadaniu */
+        /** Ustawia czas spedzony na zadaniu 
+         * @param elapsed łączny czas spedzony na zadaniu.
+         */
         void setElapsed(int elapsed);
-        /** Ustawie nazwe zadania */
+        /** Ustawie nazwe zadania 
+         * @param taskName nowa nazwa zadania
+         */
         void setName(const QString& taskName);
-        /** Ustawia rodzica zadania na t */
+        /** Ustawia rodzica zadania na t 
+         * @param t wskaźnik do zadania nadrzędnego/rodzica.
+         */
         void setParent(Task* t);
         /** Zaczyna zliczanie czasu dla zadania */
         void startTimer();
@@ -58,13 +80,14 @@ class Task {
         void stopTimer();
 
     private:
-        QString m_taskName;
-        QString m_appName;
-        int m_elapsed;
-        QTime* m_time;
+        QString m_taskName; ///< Nazwa zadania/tytul okna.
+        QString m_appName;  ///< Nazwa aplikacji powiazanej z zadaniem.
+        int m_elapsed;      ///< Łączny czas spędzony na zadaniu.
+        QTime* m_time;      ///< Liczy czas spedzony na zadaniu.
 
-        WindowAttr* m_wattr;
-        Task* m_parentTask;
+        WindowAttr* m_wattr;///< Jesli zadanie jest aplikacja, posiada atrybuty
+                            ///< okna (PID, WId itp).
+        Task* m_parentTask; ///< Wskaźnik do zadania nadrzędnego/rodzica.
 };
 
 #endif // TASK_H

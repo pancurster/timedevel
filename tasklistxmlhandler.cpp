@@ -19,7 +19,7 @@ const QString TaskListXmlHandler::TOKEN_t_elapsed ("time_elapsed");
 TaskListXmlHandler::TaskListXmlHandler(TaskManager* tl) :
     m_taskList(tl), m_temp_task(0), m_temp_task_name(QString("")),
     m_temp_task_app_name(""), m_temp_task_elapsed(0),
-    m_temp_task_parent(""), m_task_counter(-1)
+    m_temp_task_parent("")
 {
 }
 

@@ -6,8 +6,16 @@
 class Task;
 class TaskManager;
 
-/* TODO: Dodac poprawna obsluge bledow - klasy QXmlErrorHandler */
+/** Handler dla klasy QXmlSimpleReader.
+ * Logika odczytywania pliku i przywracania zadań do kontenera TaskManager
+ * Wszystkie publiczne funkcje tej klasy zasłaniają interfejs klasy 
+ * QXmlDefaultHandler po której dzidziczy \a TaskListXmlHandler. Żadna z 
+ * funkcji składowych pub. nie powinna być wywoływana ręcznie.
+ * Struktura pliku opisana jest w \a TaskListWriter.
+ * @see QXmlDefaultHandler
+ */
 class TaskListXmlHandler : public QXmlDefaultHandler {
+/* TODO: Dodac poprawna obsluge bledow - klasy QXmlErrorHandler */
     public:
         TaskListXmlHandler(TaskManager*);
         bool startDocument();
@@ -22,7 +30,9 @@ class TaskListXmlHandler : public QXmlDefaultHandler {
 
         bool fatalError(const QXmlParseException& exception);
     private:
+        /* Sprawdza czy odczytane dane dla zadania są porawne */
         bool isDataCorrect();
+
         /* Wskaznik do agregatora zadan. Podawany przez klienta klasy */
         TaskManager* m_taskList;
 
@@ -44,14 +54,7 @@ class TaskListXmlHandler : public QXmlDefaultHandler {
         /** Rodzic zadania */
         QString m_temp_task_parent;
 
-        /* Przechowuje liczbe odczytanych zadan. Poniewaz nie znane sa 
-         * PIDy zadan oraz za kazdym uruchomieniem, PID zadania zmienia sie,
-         * licznik ten odlicza do tylu dla rozroznienia i jest kluczem 
-         * w m_taskList.
-         */
-        int m_task_counter;
-
-        /* Wszystkie mozliwe tokeny w xmlu */
+        /* Wszystkie mozliwe tokeny w xmlu. Definicja w pliku cpp */
         static const QString TOKEN_top_task;
         static const QString TOKEN_child_task;
         static const QString TOKEN_task;
