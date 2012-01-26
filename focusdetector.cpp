@@ -10,10 +10,19 @@ FocusDetector::FocusDetector() : signalHandle(new FocusSignal)
 {
 }
 
+FocusDetector::~FocusDetector()
+{
+    delete signalHandle;
+    signalHandle = 0;
+}
+
 bool FocusDetector::x11EventFilter(XEvent* event)
 {
-    if (event->type == EnterNotify) {
-    //if (event->type == VisibilityNotify) {
+    if (   event->type == EnterNotify
+        || event->type == MapNotify
+        || event->type == VisibilityNotify
+        /*|| event->type == Expose*/ // dziwnie duzo zdarzen
+        || event->type == ButtonPress) {
         reportFocusChange();
         return true;
     } else {

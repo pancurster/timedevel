@@ -15,7 +15,8 @@ class Timedevel;
 class FocusDetector : public QxtNativeEventFilter {
 
     public:
-        FocusDetector(/*Timedevel* mw*/);
+        FocusDetector();
+        ~FocusDetector();
         bool x11EventFilter(XEvent* event);
 
         FocusSignal* signalHandle;

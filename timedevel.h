@@ -28,6 +28,7 @@ class Timedevel : public QObject {
         /** Odczytuje aktualnie aktywne okno i akutalizuje 
          *  dane o aktywynym oknie w mainwidget */
         void processFocusChange();
+        //void focus(QWidget*, QWidget*);
 
     private:
         /** Ma pobierac info o oknie. Narazie zle dziala :) */

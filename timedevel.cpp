@@ -13,17 +13,20 @@
 #include "focusdetector.h"
 
 Timedevel::Timedevel(TaskManager* tm, MainWindow* view,
-                     FocusDetector* fdo, QObject* parent)
-    : QObject(parent),
-      m_taskManager(0),
-      m_taskView(view),
-      m_focusDetector(fdo)
+                     FocusDetector* fdo, QObject* parent):
+    QObject(parent),
+    m_taskManager(0),
+    m_taskView(view),
+    m_focusDetector(fdo)
 {
     setTaskModel(tm);
+    m_taskManager->readFromFile();
+
 }
 
 Timedevel::~Timedevel()
 {
+    m_taskManager->writeToFile();
 }
 
 void Timedevel::setTaskModel(TaskManager* manager)
@@ -31,11 +34,11 @@ void Timedevel::setTaskModel(TaskManager* manager)
     if (m_taskManager == manager)
         return;
     if (m_taskManager) {
-        /* Wejscie z FocusDetector */
+        // Wejscie z FocusDetector
         disconnect(m_focusDetector->signalHandle, SIGNAL(focusChanged()),
                    this, SLOT(processFocusChange()));
 
-        /* Wejscie z Modelu */
+        // Wejscie z Modelu 
         disconnect(m_taskManager, SIGNAL(taskAdded(Task*)),
                    m_taskView, SLOT(addTask(Task*)));
         disconnect(m_taskManager, SIGNAL(newActiveTask(Task*)),
@@ -43,7 +46,7 @@ void Timedevel::setTaskModel(TaskManager* manager)
         disconnect(m_taskManager, SIGNAL(taskElapsedTimeChanged(const QString&, int)),
                    m_taskView, SLOT(refreshElapsedTime(const QString&, int)));
 
-        /* Wejscie z Widoku */
+        // Wejscie z Widoku
         connect(m_taskView, SIGNAL(zakonczClicked()), qApp, SLOT(quit()));
         connect(m_taskView, SIGNAL(wczytajClicked()),
                 m_taskManager, SLOT(readFromFile()));
@@ -53,11 +56,11 @@ void Timedevel::setTaskModel(TaskManager* manager)
 
     m_taskManager = manager;
     if (m_taskManager) {
-        /* Wejscie z FocusDetector */
+        // Wejscie z FocusDetector
         connect(m_focusDetector->signalHandle, SIGNAL(focusChanged()),
                 this, SLOT(processFocusChange()));
 
-        /* Wejscie z Modelu */
+        // Wejscie z Modelu
         connect(m_taskManager, SIGNAL(taskAdded(Task*)),
                 m_taskView, SLOT(addTask(Task*)));
         connect(m_taskManager, SIGNAL(newActiveTask(Task*)),
@@ -65,7 +68,7 @@ void Timedevel::setTaskModel(TaskManager* manager)
         connect(m_taskManager, SIGNAL(taskElapsedTimeChanged(const QString&, int)),
                 m_taskView, SLOT(refreshElapsedTime(const QString&, int)));
 
-        /* Wejscie z Widoku */
+        // Wejscie z Widoku
         connect(m_taskView, SIGNAL(zakonczClicked()), qApp, SLOT(quit()));
         connect(m_taskView, SIGNAL(wczytajClicked()),
                 m_taskManager, SLOT(readFromFile()));
@@ -89,6 +92,7 @@ void Timedevel::processFocusChange()
     Task* t = 0;
 
     if (!m_taskManager->isEmpty()
+        && m_taskManager->getActive() != 0
         && m_taskManager->getActive()->getTaskName() == windowName) {
         return;
     } else {

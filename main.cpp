@@ -11,15 +11,21 @@ int main(int argc, char* argv[])
     QxtApplication timedevelapp(argc, argv);
     MainWindow* mainWindow = new MainWindow;
 
-    /* detektor focusa */
+    // detektor focusa
     FocusDetector* fdo = new FocusDetector;
     timedevelapp.installNativeEventFilter(fdo);
 
-    /* Singleton TaskManager */
+    // Singleton TaskManager
     TaskManager* tm = TaskManager::getInstance();
-    /* controler-> setModel, setView */
+    // controler-> setModel, setView
     Timedevel* taskControl = new Timedevel(tm, mainWindow, fdo);
 
     mainWindow->show();
-    return timedevelapp.exec();
+    int ret = timedevelapp.exec();
+
+    delete taskControl;
+    delete tm;
+    delete mainWindow;
+
+    return ret; 
 }
