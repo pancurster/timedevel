@@ -1,0 +1,33 @@
+Timedevel application. Small task/time manager. Prevents wasting time on
+unimportant activities.
+
+***
+DEV INFO
+
+1. MVC patern in timedevel app:
+
+                        CONTROLER
+                        +-------------------+
+                        |  Timedevel        |
+                        |-------------------|
+             +----------+-m_taskManager     |
+             |          |                   |
+             |          |-m_mainWindow +------------------------+
+             |          |                   |                   |
+             |          |-m_focusDetector   |                   |
+             |          +-------------------+                   |
+MODEL        |              timedevel.h/cpp                     |
++------------+---------+                            VIEW        |
+|    TaskManager       |                            +-----------+--------+
+|----------------------|                            |    MainWindow      |
+|+add(Task)            |         SIGNALS            |--------------------|
+|+remove(Task)         |<---------------------------+                    |
+|...                   |                            |GUI                 |
+|                      |                            |                    |
+|-writeToFile()        |                            |-m_taskView:QTreeWid|
+|-readFromFile()       |                            |                    |
+|...                   |                            |                    |
+|                      |                            |                    |
++----------------------+                            +--------------------+
+  taskmanager.h/cpp                                    mainwindow.h/cpp
+
