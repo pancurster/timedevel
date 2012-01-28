@@ -47,11 +47,13 @@ void Timedevel::setTaskModel(TaskManager* manager)
                    m_taskView, SLOT(refreshElapsedTime(const QString&, int)));
 
         // Wejscie z Widoku
-        connect(m_taskView, SIGNAL(zakonczClicked()), qApp, SLOT(quit()));
-        connect(m_taskView, SIGNAL(wczytajClicked()),
+        disconnect(m_taskView, SIGNAL(zakonczClicked()), qApp, SLOT(quit()));
+        disconnect(m_taskView, SIGNAL(wczytajClicked()),
                 m_taskManager, SLOT(readFromFile()));
-        connect(m_taskView, SIGNAL(zapiszClicked()),
+        disconnect(m_taskView, SIGNAL(zapiszClicked()),
                 m_taskManager, SLOT(writeToFile()));
+        disconnect(m_taskView, SIGNAL(newTaskName(const QString&,const QString&)),
+                m_taskManager, SLOT(setName(const QString&, const QString&)));
     }
 
     m_taskManager = manager;
@@ -74,6 +76,8 @@ void Timedevel::setTaskModel(TaskManager* manager)
                 m_taskManager, SLOT(readFromFile()));
         connect(m_taskView, SIGNAL(zapiszClicked()),
                 m_taskManager, SLOT(writeToFile()));
+        connect(m_taskView, SIGNAL(newTaskName(const QString&,const QString&)),
+                m_taskManager, SLOT(setName(const QString&, const QString&)));
     }
 }
 

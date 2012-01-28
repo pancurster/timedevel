@@ -27,7 +27,8 @@
 MainWindow::MainWindow(QWidget* parent):
     QMainWindow(parent),
     m_activeItem(0),
-    lastActiveTaskIndex(0)
+    m_editedTaskName(""),
+    m_editorActive(false)
 {
     qDebug() << "Konstruktor MainWindow";
     setUi();
@@ -41,12 +42,18 @@ void MainWindow::addTask(Task* t)
 {
     QTreeWidgetItem* item = 0;
     QList<QTreeWidgetItem*> result;
+    QTreeWidgetItem* parentItem;
 
     if (t->hasParent()) {
-        result = m_taskView->findItems(t->getParent()->getTaskName(),
-                                        Qt::MatchExactly, TASK_N_C);
-        if (!result.isEmpty())
-            item = new QTreeWidgetItem(result[0]);
+        parentItem = findItem(t->getParent()->getTaskName());
+
+        if (parentItem) {
+            item = new QTreeWidgetItem(parentItem);
+        } else {
+            qDebug()<<"   BLAD: Nie znaleziono parentItem!";
+            return;
+        }
+
     } else {
         item = new QTreeWidgetItem(m_taskView);
     }
@@ -62,8 +69,8 @@ void MainWindow::addTask(Task* t)
         item->setText(WID_C, QString::number(wa->getWId()));
     }
 
-    if (t->hasParent() && !result.isEmpty()) {
-        result[0]->addChild(item);
+    if (t->hasParent() && parentItem) {
+        parentItem->addChild(item);
     } else {
         item->setChildIndicatorPolicy(
                         QTreeWidgetItem::DontShowIndicatorWhenChildless);
@@ -76,13 +83,19 @@ void MainWindow::addTask(Task* t)
 
 QTreeWidgetItem* MainWindow::findItem(const QString& tName)
 {
+    // Szukanie w top level items
+    // Oszczedza kilku przebiegow petli
+    QList<QTreeWidgetItem*> topEntity;
+    topEntity = m_taskView->findItems(tName, Qt::MatchExactly, TASK_N_C);
+    if (!topEntity.isEmpty()) // udalo sie, konczymy.
+        return topEntity[0];
+    
+    // Szukanie w pod-zadaniach
     QTreeWidgetItem* top;
     QTreeWidgetItem* child;
     for (int t = 0; t < m_taskView->topLevelItemCount(); ++t) {
         top = m_taskView->topLevelItem(t);
-        if (tName == top->text(TASK_N_C)) {
-            return top;
-        } else if (top->childCount() > 0) {
+        if (top->childCount() > 0) {
             for (int c = 0; c < top->childCount(); ++c) {
                 child = top->child(c);
                 if (tName == child->text(TASK_N_C))
@@ -124,7 +137,7 @@ void MainWindow::refreshElapsedTime(const QString& task, int newElapsedTime)
     qDebug() << "Wywolanie refreshElapsedTime" << task <<" "<<newElapsedTime;
     QTreeWidgetItem* result = findItem(task);
     if (!result) {
-        qDebug() << "BLAD!: refreshElapsedTime, nie znaleziono zadania"
+        qDebug() << "   BLAD: refreshElapsedTime, nie znaleziono zadania"
                  << task;
         return;
     }
@@ -138,6 +151,29 @@ void MainWindow::trayIconClicked(QSystemTrayIcon::ActivationReason reason)
             this->show();
         else
             this->hide();
+    }
+}
+
+void MainWindow::editTaskName(QTreeWidgetItem* item, int /*column*/)
+{
+    // potrzebne do updejtu w modelu (nazwa zad. - klucz)
+    m_editedTaskName = item->text(TASK_N_C);
+    m_taskView->openPersistentEditor(item, TASK_N_C);
+    m_editorActive = true;
+}
+
+void MainWindow::endEditTaskName(QTreeWidgetItem* item, int /*column*/)
+{
+    // Slot/funkcja ta, polaczona jest z sygnalem itemChanged klasy typu
+    // QTreeWidget i wywoływana powinna być w przypadku kiedy zadanie edytowane
+    // jest przez urzytkownika. Zmienna m_editorActive wprowadzona poniewaz
+    // przy odczytywaniu przy starcie wczesniej zapisanych zadan wypełniana
+    // jest składowa m_taskView co powoduje emitowanie sygnału i wywołanie tej
+    // funkcji - prowadzac do błedu.
+    if (m_editorActive == true ) {
+        m_taskView->closePersistentEditor(item, TASK_N_C);
+        emit newTaskName(m_editedTaskName, item->text(TASK_N_C));
+        m_editorActive = false;
     }
 }
 
@@ -186,6 +222,10 @@ void MainWindow::setUi()
     connect(m_zapisz,  SIGNAL(clicked()), this, SIGNAL(zapiszClicked()));
     connect(m_trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
             this, SLOT(trayIconClicked(QSystemTrayIcon::ActivationReason)));
+    connect(m_taskView,SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)),
+            this, SLOT(editTaskName(QTreeWidgetItem*, int)));
+    connect(m_taskView,SIGNAL(itemChanged(QTreeWidgetItem*, int)),
+            this, SLOT(endEditTaskName(QTreeWidgetItem*, int)));
 }
 
 QString MainWindow::toMinSec(int wholeTime, const QString spliter)

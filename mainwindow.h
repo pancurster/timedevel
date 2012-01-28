@@ -26,6 +26,8 @@ class MainWindow : public QMainWindow {
         void addTask(Task* t);
         void newActiveTask(Task* t);
         void refreshElapsedTime(const QString& task, int newElapsedTime);
+        void editTaskName(QTreeWidgetItem* item, int column);
+        void endEditTaskName(QTreeWidgetItem* item, int column);
 
         void trayIconClicked(QSystemTrayIcon::ActivationReason reason);
 
@@ -33,6 +35,7 @@ class MainWindow : public QMainWindow {
         void zakonczClicked();
         void wczytajClicked();
         void zapiszClicked();
+        void newTaskName(const QString& taskName, const QString& newName);
 
     private:
         void setUi();
@@ -40,12 +43,15 @@ class MainWindow : public QMainWindow {
         QTreeWidgetItem* findItem(Task* t);
         QString toMinSec(int counter, const QString spliter = ":");
 
-        QTreeWidgetItem* m_activeItem;
-        int lastActiveTaskIndex;
+        QTreeWidgetItem* m_activeItem;  //aktualnie aktywne zadanie
+        QString m_editedTaskName;       //nazwa edytowanego zadania
+        bool m_editorActive;            //flaga aktywnego edytora
+
+        // Kolejnosc pol w wyliczeniu wyznacza kolejnosc w m_taskView typu
+        // QTreeWidget. Zabezpiecza przed rzaglerka cygerkami w funkcjach
+        // ktore oczekuja numeru kolumny widgetu QTreeWidget.
         enum {ACTIVE_C, TASK_N_C, APP_N_C, ELAPS_C,
               PID_C, WID_C} columnOrder;
-
-        /**** WIDGETS ***/
 
         /* Main widget */
         QTreeWidget* m_taskView;

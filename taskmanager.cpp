@@ -65,7 +65,10 @@ void TaskManager::remove(const QString& taskName)
 
 void TaskManager::setName(const QString& taskName, const QString& newName)
 {
+    qDebug() << "SETNAME";
     Task* t = value(taskName);
+    if (!t)
+        qDebug() << "   BLAD: TaskManager::setName, nie znaleziono zadania";
     t->setName(newName);
     emit taskChanged(t);
 }
@@ -90,7 +93,7 @@ void TaskManager::setActiveTask(const QString& taskName)
         emit newActiveTask(m_activeTask);
 
     } else {
-        qDebug() << "BLAD!, TaskManager::setActiveTask: brak zadania"
+        qDebug() << "   BLAD!, TaskManager::setActiveTask: brak zadania"
                  << taskName;
     }
 }

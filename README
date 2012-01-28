@@ -4,7 +4,7 @@ unimportant activities.
 ***
 DEV INFO
 
-1. MVC patern in timedevel app:
+1. Schemat organizacji programu:
 
                         CONTROLER
                         +-------------------+
@@ -30,4 +30,9 @@ MODEL        |              timedevel.h/cpp                     |
 |                      |                            |                    |
 +----------------------+                            +--------------------+
   taskmanager.h/cpp                                    mainwindow.h/cpp
+
+2. Wszystkie błędy i niepoprawne działanie wysyłane na standardowe wyjście
+powinny być poprzedzone 3 spacjami i słowem "BLAD:" dla lepszej czytelności.
+Przykład:
+qDebug() << "   BLAD: ble ble";
 

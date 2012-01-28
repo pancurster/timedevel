@@ -98,9 +98,9 @@ bool TaskListXmlHandler::endElement( const QString& ,
 
     if (qName == TOKEN_task) {
         if ( ! isDataCorrect()) {
-            qDebug() << "BLAD parsowania pliku!";
+            qDebug() << "   BLAD parsowania pliku!";
             /*Jeden niepoprawny wpis nie musi przeszkodzic w dalszym czytaniu*/
-            //return false;
+//            return false;
         }
 
         /* WSZYSTKO OK, dzialamy! */
@@ -111,8 +111,8 @@ bool TaskListXmlHandler::endElement( const QString& ,
             if ( parent_t != 0) {
                 m_temp_task->setParent(parent_t);
             } else {
-                qDebug() <<"BLAD: Nie znaleziono rodzica "<<m_temp_task_parent
-                         <<" zadania: "<<m_temp_task_name;
+                qDebug() <<"   BLAD: Nie znaleziono rodzica "
+                         <<m_temp_task_parent <<" zadania: "<<m_temp_task_name;
             }
         }
 
