@@ -28,42 +28,49 @@ class MainWindow : public QMainWindow {
         void refreshElapsedTime(const QString& task, int newElapsedTime);
         void editTaskName(QTreeWidgetItem* item, int column);
         void endEditTaskName(QTreeWidgetItem* item, int column);
-
         void trayIconClicked(QSystemTrayIcon::ActivationReason reason);
 
     signals:
-        void zakonczClicked();
-        void wczytajClicked();
-        void zapiszClicked();
-        void newTaskName(const QString& taskName, const QString& newName);
+        void orderQuit();
+        void orderLoad();
+        void orderSave();
+        void orderNewTask();
+        void orderEditTaskName(const QString& taskName, const QString& newName);
+        void orderDeleteTask(const QString* taskName);
+        void orderFindTask(const QString* taskName);
+        void orderPreferences();
 
     private:
         void setUi();
+        void setToolbar();
+        void setConnections();
+
         QTreeWidgetItem* findItem(const QString& tName);
         QTreeWidgetItem* findItem(Task* t);
-        QString toMinSec(int counter, const QString spliter = ":");
+        QString          toMinSec(int counter, const QString spliter = ":");
 
-        QTreeWidgetItem* m_activeItem;  //aktualnie aktywne zadanie
-        QString m_editedTaskName;       //nazwa edytowanego zadania
-        bool m_editorActive;            //flaga aktywnego edytora
+        QTreeWidget*     m_taskView;        //Main widget
+        QSystemTrayIcon* m_trayIcon;        //Ikona w trayu
+        QToolBar*        m_toolbar;         //Pasek narzedziowy
+        QAction*         m_newTaskAction;   //Nowe zadanie
+        QAction*         m_deleteTaskAction;
+        QAction*         m_findTaskAction;
+        QAction*         m_editTaskAction;
+        QAction*         m_perferencesAction;
+        QPushButton*     m_aktualizuj;
+        QPushButton*     m_zapisz;
+        QPushButton*     m_zakoncz;
+        QPushButton*     m_wczytaj;
+
+        QTreeWidgetItem* m_activeItem;      //Aktualnie aktywne zadanie
+        QString          m_editedTaskName;  //Nazwa edytowanego zadania
+        bool             m_editorActive;    //Flaga aktywnego edytora
 
         // Kolejnosc pol w wyliczeniu wyznacza kolejnosc w m_taskView typu
         // QTreeWidget. Zabezpiecza przed rzaglerka cygerkami w funkcjach
         // ktore oczekuja numeru kolumny widgetu QTreeWidget.
         enum {ACTIVE_C, TASK_N_C, APP_N_C, ELAPS_C,
               PID_C, WID_C} columnOrder;
-
-        /* Main widget */
-        QTreeWidget* m_taskView;
-
-        QPushButton* m_aktualizuj, *m_zapisz, *m_zakoncz, *m_wczytaj;
-        QSystemTrayIcon* m_trayIcon;
-
-        /* Layouts */
-        QVBoxLayout* mainLayout;
-        QHBoxLayout* buttonsLayout;
-        QGridLayout* glayout;
-
 };
 
 #endif // MAINWINDOW_H

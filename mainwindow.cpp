@@ -16,6 +16,9 @@
 #include <QGridLayout>
 #include <QSystemTrayIcon>
 #include <QIcon>
+#include <QToolBar>
+#include <QStatusBar>
+#include <QAction>
 
 #include <QxtGui/QxtWindowSystem>
 
@@ -31,11 +34,101 @@ MainWindow::MainWindow(QWidget* parent):
     m_editorActive(false)
 {
     qDebug() << "Konstruktor MainWindow";
+
     setUi();
+    setToolbar();
+    setConnections();
 }
 
 MainWindow::~MainWindow()
 {
+}
+
+void MainWindow::setUi()
+{
+    setWindowTitle("TimeDevelop 0.1v");
+    this->resize(800,450);
+
+    QWidget* cw = new QWidget;
+    setCentralWidget(cw);
+
+    QVBoxLayout* mainLayout = new QVBoxLayout;
+    cw->setLayout(mainLayout);
+
+    m_taskView= new QTreeWidget;
+    QStringList labels;
+    labels <<""<<""<<""<<""<<""<<""; // :)
+    labels[ACTIVE_C] = QString("");
+    labels[TASK_N_C] = QString("Task name");
+    labels[APP_N_C] = QString("Application name");
+    labels[ELAPS_C] = QString("Elapsed time");
+    labels[PID_C] = QString("Pid");
+    labels[WID_C] = QString("WId");
+    m_taskView->setHeaderLabels(labels);
+    m_taskView->setColumnWidth(ACTIVE_C, 40);
+    m_taskView->setColumnWidth(TASK_N_C, 60);
+    mainLayout->addWidget(m_taskView);
+
+    QHBoxLayout* buttonsLayout = new QHBoxLayout();
+    mainLayout->addLayout(buttonsLayout);
+
+    m_aktualizuj =  new QPushButton("Aktualizuj");
+    m_zapisz =      new QPushButton("Zapisz");
+    m_zakoncz =     new QPushButton("Zakoncz");
+    m_wczytaj =     new QPushButton("Wczytaj liste");
+    buttonsLayout->addWidget(m_aktualizuj);
+    buttonsLayout->addWidget(m_zapisz);
+    buttonsLayout->addWidget(m_wczytaj);
+    buttonsLayout->addWidget(m_zakoncz);
+
+    m_trayIcon = new QSystemTrayIcon(QIcon("icon/icon64.png"));
+    m_trayIcon->show();
+
+    statusBar()->showMessage("Ready");
+}
+
+void MainWindow::setToolbar()
+{
+    m_newTaskAction = new QAction(QIcon("icon/add_task.png"),"&New Task",this);
+    m_newTaskAction->setStatusTip("Nowe zadanie");
+    m_deleteTaskAction=new QAction(QIcon("icon/delete_task.png"),"&Delete",this);
+    m_deleteTaskAction->setStatusTip("Usuń zadanie");
+    m_findTaskAction= new QAction(QIcon("icon/find_task.png"),"&Find Task",this);
+    m_findTaskAction->setStatusTip("Szukaj zadania");
+    m_editTaskAction= new QAction(QIcon("icon/edit_task.png"),"&Edit Task",this);
+    m_editTaskAction->setStatusTip("Edytuj zadanie");
+    m_perferencesAction=new QAction(QIcon("icon/preferences.png"),"&Preferences",this);
+    m_perferencesAction->setStatusTip("Ustawienia");
+
+    m_toolbar = new QToolBar("Tools", this);
+    m_toolbar->addAction(m_newTaskAction);
+    m_toolbar->addAction(m_deleteTaskAction);
+    m_toolbar->addAction(m_findTaskAction);
+    m_toolbar->addAction(m_editTaskAction);
+    m_toolbar->addAction(m_perferencesAction);
+
+    addToolBar(m_toolbar);
+}
+
+void MainWindow::setConnections()
+{
+    connect(m_zakoncz, SIGNAL(clicked()), this, SIGNAL(orderQuit()));
+    connect(m_wczytaj, SIGNAL(clicked()), this, SIGNAL(orderLoad()));
+    connect(m_zapisz,  SIGNAL(clicked()), this, SIGNAL(orderSave()));
+
+    connect(m_taskView,SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)),
+            this, SLOT(editTaskName(QTreeWidgetItem*, int)));
+    connect(m_taskView,SIGNAL(itemChanged(QTreeWidgetItem*, int)),
+            this, SLOT(endEditTaskName(QTreeWidgetItem*, int)));
+
+    connect(m_trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+            this, SLOT(trayIconClicked(QSystemTrayIcon::ActivationReason)));
+
+connect(m_newTaskAction,   SIGNAL(triggered()),this,SIGNAL(newTask())); 
+connect(m_deleteTaskAction,SIGNAL(triggered()),this,SIGNAL(orderDeleteTask()));
+connect(m_findTaskAction,  SIGNAL(triggered()),this,SIGNAL(orderFindTask()));
+connect(m_editTaskAction,  SIGNAL(triggered()),this,SIGNAL(orderEditTaskName()));
+connect(m_perferencesAction,SIGNAL(triggered()),this,SIGNAL(orderPreferences()));
 }
 
 void MainWindow::addTask(Task* t)
@@ -172,61 +265,11 @@ void MainWindow::endEditTaskName(QTreeWidgetItem* item, int /*column*/)
     // funkcji - prowadzac do błedu.
     if (m_editorActive == true ) {
         m_taskView->closePersistentEditor(item, TASK_N_C);
-        emit newTaskName(m_editedTaskName, item->text(TASK_N_C));
+        emit orderEditTaskName(m_editedTaskName, item->text(TASK_N_C));
         m_editorActive = false;
     }
 }
 
-void MainWindow::setUi()
-{
-    setWindowTitle("TimeDevelop 0.1v");
-    this->resize(800,600);
-
-    QWidget* cw = new QWidget;
-    setCentralWidget(cw);
-
-    mainLayout = new QVBoxLayout;
-    cw->setLayout(mainLayout);
-
-    m_taskView= new QTreeWidget;
-    QStringList labels;
-    labels <<""<<""<<""<<""<<""<<""; // :)
-    labels[ACTIVE_C] = QString("");
-    labels[TASK_N_C] = QString("Task name");
-    labels[APP_N_C] = QString("Application name");
-    labels[ELAPS_C] = QString("Elapsed time");
-    labels[PID_C] = QString("Pid");
-    labels[WID_C] = QString("WId");
-    m_taskView->setHeaderLabels(labels);
-    m_taskView->setColumnWidth(ACTIVE_C, 40);
-    m_taskView->setColumnWidth(TASK_N_C, 60);
-    mainLayout->addWidget(m_taskView);
-
-    buttonsLayout = new QHBoxLayout();
-    mainLayout->addLayout(buttonsLayout);
-
-    m_aktualizuj =  new QPushButton("Aktualizuj");
-    m_zapisz =      new QPushButton("Zapisz");
-    m_zakoncz =     new QPushButton("Zakoncz");
-    m_wczytaj =     new QPushButton("Wczytaj liste");
-    buttonsLayout->addWidget(m_aktualizuj);
-    buttonsLayout->addWidget(m_zapisz);
-    buttonsLayout->addWidget(m_wczytaj);
-    buttonsLayout->addWidget(m_zakoncz);
-
-    m_trayIcon = new QSystemTrayIcon(QIcon("icon/icon64.png"));
-    m_trayIcon->show();
-
-    connect(m_zakoncz, SIGNAL(clicked()), this, SIGNAL(zakonczClicked()));
-    connect(m_wczytaj, SIGNAL(clicked()), this, SIGNAL(wczytajClicked()));
-    connect(m_zapisz,  SIGNAL(clicked()), this, SIGNAL(zapiszClicked()));
-    connect(m_trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
-            this, SLOT(trayIconClicked(QSystemTrayIcon::ActivationReason)));
-    connect(m_taskView,SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)),
-            this, SLOT(editTaskName(QTreeWidgetItem*, int)));
-    connect(m_taskView,SIGNAL(itemChanged(QTreeWidgetItem*, int)),
-            this, SLOT(endEditTaskName(QTreeWidgetItem*, int)));
-}
 
 QString MainWindow::toMinSec(int wholeTime, const QString spliter)
 {

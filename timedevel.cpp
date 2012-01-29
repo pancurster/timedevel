@@ -47,12 +47,12 @@ void Timedevel::setTaskModel(TaskManager* manager)
                    m_taskView, SLOT(refreshElapsedTime(const QString&, int)));
 
         // Wejscie z Widoku
-        disconnect(m_taskView, SIGNAL(zakonczClicked()), qApp, SLOT(quit()));
-        disconnect(m_taskView, SIGNAL(wczytajClicked()),
+        disconnect(m_taskView, SIGNAL(orderQuit()), qApp, SLOT(quit()));
+        disconnect(m_taskView, SIGNAL(orderLoad()),
                 m_taskManager, SLOT(readFromFile()));
-        disconnect(m_taskView, SIGNAL(zapiszClicked()),
+        disconnect(m_taskView, SIGNAL(orderSave()),
                 m_taskManager, SLOT(writeToFile()));
-        disconnect(m_taskView, SIGNAL(newTaskName(const QString&,const QString&)),
+        disconnect(m_taskView, SIGNAL(orderEditTaskName(const QString&,const QString&)),
                 m_taskManager, SLOT(setName(const QString&, const QString&)));
     }
 
@@ -63,6 +63,7 @@ void Timedevel::setTaskModel(TaskManager* manager)
                 this, SLOT(processFocusChange()));
 
         // Wejscie z Modelu
+        // przedrostek announce przy syg. wychodzacych z modelu ?
         connect(m_taskManager, SIGNAL(taskAdded(Task*)),
                 m_taskView, SLOT(addTask(Task*)));
         connect(m_taskManager, SIGNAL(newActiveTask(Task*)),
@@ -71,12 +72,12 @@ void Timedevel::setTaskModel(TaskManager* manager)
                 m_taskView, SLOT(refreshElapsedTime(const QString&, int)));
 
         // Wejscie z Widoku
-        connect(m_taskView, SIGNAL(zakonczClicked()), qApp, SLOT(quit()));
-        connect(m_taskView, SIGNAL(wczytajClicked()),
+        connect(m_taskView, SIGNAL(orderQuit()), qApp, SLOT(quit()));
+        connect(m_taskView, SIGNAL(orderLoad()),
                 m_taskManager, SLOT(readFromFile()));
-        connect(m_taskView, SIGNAL(zapiszClicked()),
+        connect(m_taskView, SIGNAL(orderSave()),
                 m_taskManager, SLOT(writeToFile()));
-        connect(m_taskView, SIGNAL(newTaskName(const QString&,const QString&)),
+        connect(m_taskView, SIGNAL(orderEditTaskName(const QString&,const QString&)),
                 m_taskManager, SLOT(setName(const QString&, const QString&)));
     }
 }
