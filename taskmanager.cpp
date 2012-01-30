@@ -37,6 +37,16 @@ void TaskManager::add(const QString& key, Task* t)
     emit taskAdded(t);
 }
 
+void TaskManager::add(const QString& key)
+{
+    Task* t = new Task(key);
+    if (t) {
+        insert(key, t);
+        qDebug() <<"Dodano zadanie: "<<t->getTaskName();
+        emit taskAdded(t);
+    }
+}
+
 void TaskManager::trySetParent(Task* t)
 {
     QString app_name = t->getAppName();

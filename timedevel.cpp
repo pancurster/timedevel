@@ -58,6 +58,8 @@ void Timedevel::setTaskModel(TaskManager* manager)
                 m_taskManager, SLOT(setName(const QString&, const QString&)));
         disconnect(m_taskView, SIGNAL(orderRemoveTask(const QString&)),
                 m_taskManager, SLOT(remove(const QString&)));
+        disconnect(m_taskView, SIGNAL(orderNewTask(const QString&)),
+                m_taskManager, SLOT(add(const QString&)));
     }
 
     m_taskManager = manager;
@@ -87,6 +89,8 @@ void Timedevel::setTaskModel(TaskManager* manager)
                 m_taskManager, SLOT(setName(const QString&, const QString&)));
         connect(m_taskView, SIGNAL(orderRemoveTask(const QString&)),
                 m_taskManager, SLOT(remove(const QString&)));
+        connect(m_taskView, SIGNAL(orderNewTask(const QString&)),
+                m_taskManager, SLOT(add(const QString&)));
     }
 }
 

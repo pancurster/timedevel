@@ -20,6 +20,7 @@
 #include <QStatusBar>
 #include <QAction>
 #include <QMessageBox>
+#include <QInputDialog>
 
 #include <QxtGui/QxtWindowSystem>
 
@@ -80,36 +81,43 @@ void MainWindow::setToolbar()
 {
     m_newTaskAction = new QAction(QIcon("icon/add_task.png"),"&New Task",this);
     m_newTaskAction->setStatusTip("Nowe zadanie");
+    m_newTaskAction->setToolTip(tr("Dodaj nowe zadanie"));
+
     m_deleteTaskAction=new QAction(QIcon("icon/delete_task.png"),"&Delete",this);
     m_deleteTaskAction->setStatusTip("Usun zadanie");
+
     m_findTaskAction= new QAction(QIcon("icon/find_task.png"),"&Find Task",this);
     m_findTaskAction->setStatusTip("Szukaj zadania");
+
     m_editTaskAction= new QAction(QIcon("icon/edit_task.png"),"&Edit Task",this);
     m_editTaskAction->setStatusTip("Edytuj zadanie");
+
     m_perferencesAction=new QAction(QIcon("icon/preferences.png"),"&Preferences",this);
     m_perferencesAction->setStatusTip("Ustawienia");
+
     m_quitAction = new QAction(QIcon("icon/quit.png"), "Quit", this);
     m_quitAction->setStatusTip("Zakoncz");
 
-    m_toolbar = new QToolBar("Tools", this);
-    m_toolbar->setIconSize(QSize(48, 48));
-    m_toolbar->addAction(m_newTaskAction);
-    m_toolbar->addAction(m_deleteTaskAction);
-    m_toolbar->addAction(m_editTaskAction);
-    m_toolbar->addAction(m_findTaskAction);
-    m_toolbar->addAction(m_perferencesAction);
+    QToolBar* toolbarMain = new QToolBar("Tools", this);
+    toolbarMain->setIconSize(QSize(48, 48));
+    toolbarMain->addAction(m_newTaskAction);
+    toolbarMain->addAction(m_deleteTaskAction);
+    toolbarMain->addAction(m_editTaskAction);
+    toolbarMain->addAction(m_findTaskAction);
+    toolbarMain->addAction(m_perferencesAction);
 
     QToolBar* toolbarQuit = new QToolBar("Quit", this);
     toolbarQuit->setIconSize(QSize(48,48));
     toolbarQuit->addAction(m_quitAction);
 
-    addToolBar(Qt::RightToolBarArea, m_toolbar);
+    addToolBar(Qt::RightToolBarArea, toolbarMain);
     addToolBar(Qt::RightToolBarArea, toolbarQuit);
 }
 
 void MainWindow::setConnections()
 {
-connect(m_newTaskAction,   SIGNAL(triggered()),this,SIGNAL(orderNewTask())); 
+connect(m_newTaskAction,   SIGNAL(triggered()),
+        this, SLOT(processNewTask())); 
 connect(m_deleteTaskAction,SIGNAL(triggered()),
         this, SLOT(processRemoveTask()));
 connect(m_findTaskAction,  SIGNAL(triggered()),this,SIGNAL(orderFindTask()));
@@ -124,6 +132,17 @@ connect(m_quitAction, SIGNAL(triggered()), this, SIGNAL(orderQuit()));
 
     connect(m_trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
             this, SLOT(trayIconClicked(QSystemTrayIcon::ActivationReason)));
+}
+
+void MainWindow::processNewTask()
+{
+    bool ok;
+    QString newTask = QInputDialog::getText(this, tr("Dodaj nowe zadanie"),
+                      tr("Nazwa zadania:"), QLineEdit::Normal, "Nowe Zadanie",
+                      &ok);
+    if ( ok && !newTask.isEmpty()) {
+        emit orderNewTask(newTask);
+    }
 }
 
 void MainWindow::removeTaskFromView(const QString& taskName)
@@ -158,6 +177,8 @@ void MainWindow::processRemoveTask()
         removeBox.setText(QString("Napewno chcesz usunac zadanie:<b> %1</b>")
                           .arg(itemToRemove[0]->text(TASK_N_C)));
         removeBox.setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
+        removeBox.setWindowTitle("Usun zadanie...");
+        removeBox.setIcon(QMessageBox::Question);
         removeBox.setDefaultButton(QMessageBox::Cancel);
         int ret = removeBox.exec();
         if (ret == QMessageBox::Yes)
@@ -165,6 +186,8 @@ void MainWindow::processRemoveTask()
     } else {
         QMessageBox noTaskSelected;
         noTaskSelected.setText("Nie zaznaczono zadania do usuniecia");
+        noTaskSelected.setWindowTitle("Zaznacz zadanie");
+        noTaskSelected.setIcon(QMessageBox::Information);
         noTaskSelected.exec();
     }
     return;

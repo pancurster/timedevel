@@ -18,6 +18,7 @@ class TaskManager : public QObject, public QMap<QString, Task*> {
 
     public slots:
         void add(const QString&, Task*);
+        void add(const QString&);
         void remove(const QString& taskName);
         void setName(const QString& taskName, const QString& newName);
         void setElapsed(const QString& taskName, const int elapsed);

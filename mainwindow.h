@@ -26,17 +26,20 @@ class MainWindow : public QMainWindow {
         void addTask(Task* t);
         void newActiveTask(Task* t);
         void refreshElapsedTime(const QString& task, int newElapsedTime);
+
         void editTaskName(QTreeWidgetItem* item, int column);
         void endEditTaskName(QTreeWidgetItem* item, int column);
         void trayIconClicked(QSystemTrayIcon::ActivationReason reason);
+        
         void processRemoveTask();   // emits orderRemoveTask(...)
         void removeTaskFromView(const QString& taskName);
+        void processNewTask();
 
     signals:
         void orderQuit();
         void orderLoad();
         void orderSave();
-        void orderNewTask();
+        void orderNewTask(const QString& taskName);
         void orderEditTaskName(const QString& taskName, const QString& newName);
         void orderRemoveTask(const QString& taskName);
         void orderFindTask(const QString& taskName);
@@ -54,8 +57,8 @@ class MainWindow : public QMainWindow {
 
         QTreeWidget*     m_taskView;        //Main widget
         QSystemTrayIcon* m_trayIcon;        //Ikona w trayu
-        QToolBar*        m_toolbar;         //Pasek narzedziowy
-        QAction*         m_newTaskAction;   //Nowe zadanie
+
+        QAction*         m_newTaskAction;
         QAction*         m_deleteTaskAction;
         QAction*         m_findTaskAction;
         QAction*         m_editTaskAction;
