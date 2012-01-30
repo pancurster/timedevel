@@ -29,6 +29,8 @@ class MainWindow : public QMainWindow {
         void editTaskName(QTreeWidgetItem* item, int column);
         void endEditTaskName(QTreeWidgetItem* item, int column);
         void trayIconClicked(QSystemTrayIcon::ActivationReason reason);
+        void processRemoveTask();   // emits orderRemoveTask(...)
+        void removeTaskFromView(const QString& taskName);
 
     signals:
         void orderQuit();
@@ -36,8 +38,8 @@ class MainWindow : public QMainWindow {
         void orderSave();
         void orderNewTask();
         void orderEditTaskName(const QString& taskName, const QString& newName);
-        void orderDeleteTask(const QString* taskName);
-        void orderFindTask(const QString* taskName);
+        void orderRemoveTask(const QString& taskName);
+        void orderFindTask(const QString& taskName);
         void orderPreferences();
 
     private:
@@ -45,8 +47,9 @@ class MainWindow : public QMainWindow {
         void setToolbar();
         void setConnections();
 
-        QTreeWidgetItem* findItem(const QString& tName);
-        QTreeWidgetItem* findItem(Task* t);
+        QTreeWidgetItem* findTask(const QString& tName);
+        QTreeWidgetItem* findTask(Task* t);
+        QTreeWidgetItem* findTopLevelTask(const QString& taskName);
         QString          toMinSec(int counter, const QString spliter = ":");
 
         QTreeWidget*     m_taskView;        //Main widget
@@ -57,10 +60,7 @@ class MainWindow : public QMainWindow {
         QAction*         m_findTaskAction;
         QAction*         m_editTaskAction;
         QAction*         m_perferencesAction;
-        QPushButton*     m_aktualizuj;
-        QPushButton*     m_zapisz;
-        QPushButton*     m_zakoncz;
-        QPushButton*     m_wczytaj;
+        QAction*         m_quitAction;
 
         QTreeWidgetItem* m_activeItem;      //Aktualnie aktywne zadanie
         QString          m_editedTaskName;  //Nazwa edytowanego zadania

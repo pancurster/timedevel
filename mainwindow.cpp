@@ -19,6 +19,7 @@
 #include <QToolBar>
 #include <QStatusBar>
 #include <QAction>
+#include <QMessageBox>
 
 #include <QxtGui/QxtWindowSystem>
 
@@ -69,18 +70,6 @@ void MainWindow::setUi()
     m_taskView->setColumnWidth(TASK_N_C, 60);
     mainLayout->addWidget(m_taskView);
 
-    QHBoxLayout* buttonsLayout = new QHBoxLayout();
-    mainLayout->addLayout(buttonsLayout);
-
-    m_aktualizuj =  new QPushButton("Aktualizuj");
-    m_zapisz =      new QPushButton("Zapisz");
-    m_zakoncz =     new QPushButton("Zakoncz");
-    m_wczytaj =     new QPushButton("Wczytaj liste");
-    buttonsLayout->addWidget(m_aktualizuj);
-    buttonsLayout->addWidget(m_zapisz);
-    buttonsLayout->addWidget(m_wczytaj);
-    buttonsLayout->addWidget(m_zakoncz);
-
     m_trayIcon = new QSystemTrayIcon(QIcon("icon/icon64.png"));
     m_trayIcon->show();
 
@@ -92,29 +81,41 @@ void MainWindow::setToolbar()
     m_newTaskAction = new QAction(QIcon("icon/add_task.png"),"&New Task",this);
     m_newTaskAction->setStatusTip("Nowe zadanie");
     m_deleteTaskAction=new QAction(QIcon("icon/delete_task.png"),"&Delete",this);
-    m_deleteTaskAction->setStatusTip("Usuń zadanie");
+    m_deleteTaskAction->setStatusTip("Usun zadanie");
     m_findTaskAction= new QAction(QIcon("icon/find_task.png"),"&Find Task",this);
     m_findTaskAction->setStatusTip("Szukaj zadania");
     m_editTaskAction= new QAction(QIcon("icon/edit_task.png"),"&Edit Task",this);
     m_editTaskAction->setStatusTip("Edytuj zadanie");
     m_perferencesAction=new QAction(QIcon("icon/preferences.png"),"&Preferences",this);
     m_perferencesAction->setStatusTip("Ustawienia");
+    m_quitAction = new QAction(QIcon("icon/quit.png"), "Quit", this);
+    m_quitAction->setStatusTip("Zakoncz");
 
     m_toolbar = new QToolBar("Tools", this);
+    m_toolbar->setIconSize(QSize(48, 48));
     m_toolbar->addAction(m_newTaskAction);
     m_toolbar->addAction(m_deleteTaskAction);
-    m_toolbar->addAction(m_findTaskAction);
     m_toolbar->addAction(m_editTaskAction);
+    m_toolbar->addAction(m_findTaskAction);
     m_toolbar->addAction(m_perferencesAction);
 
-    addToolBar(m_toolbar);
+    QToolBar* toolbarQuit = new QToolBar("Quit", this);
+    toolbarQuit->setIconSize(QSize(48,48));
+    toolbarQuit->addAction(m_quitAction);
+
+    addToolBar(Qt::RightToolBarArea, m_toolbar);
+    addToolBar(Qt::RightToolBarArea, toolbarQuit);
 }
 
 void MainWindow::setConnections()
 {
-    connect(m_zakoncz, SIGNAL(clicked()), this, SIGNAL(orderQuit()));
-    connect(m_wczytaj, SIGNAL(clicked()), this, SIGNAL(orderLoad()));
-    connect(m_zapisz,  SIGNAL(clicked()), this, SIGNAL(orderSave()));
+connect(m_newTaskAction,   SIGNAL(triggered()),this,SIGNAL(orderNewTask())); 
+connect(m_deleteTaskAction,SIGNAL(triggered()),
+        this, SLOT(processRemoveTask()));
+connect(m_findTaskAction,  SIGNAL(triggered()),this,SIGNAL(orderFindTask()));
+connect(m_editTaskAction,  SIGNAL(triggered()),this,SIGNAL(orderEditTaskName()));
+connect(m_perferencesAction,SIGNAL(triggered()),this,SIGNAL(orderPreferences()));
+connect(m_quitAction, SIGNAL(triggered()), this, SIGNAL(orderQuit()));
 
     connect(m_taskView,SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)),
             this, SLOT(editTaskName(QTreeWidgetItem*, int)));
@@ -123,12 +124,50 @@ void MainWindow::setConnections()
 
     connect(m_trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
             this, SLOT(trayIconClicked(QSystemTrayIcon::ActivationReason)));
+}
 
-connect(m_newTaskAction,   SIGNAL(triggered()),this,SIGNAL(newTask())); 
-connect(m_deleteTaskAction,SIGNAL(triggered()),this,SIGNAL(orderDeleteTask()));
-connect(m_findTaskAction,  SIGNAL(triggered()),this,SIGNAL(orderFindTask()));
-connect(m_editTaskAction,  SIGNAL(triggered()),this,SIGNAL(orderEditTaskName()));
-connect(m_perferencesAction,SIGNAL(triggered()),this,SIGNAL(orderPreferences()));
+void MainWindow::removeTaskFromView(const QString& taskName)
+{
+    QTreeWidgetItem* toRemove;
+    QTreeWidgetItem* removed;
+    int index = -1;
+    toRemove = findTopLevelTask(taskName);
+    if (toRemove) {
+        index   = m_taskView->indexOfTopLevelItem(toRemove);
+        removed = m_taskView->takeTopLevelItem(index);
+        delete removed;
+        return;
+    }
+
+    toRemove = findTask(taskName);
+    if (toRemove) {
+        toRemove->parent()->removeChild(toRemove);
+        delete toRemove;
+        return;
+    }
+
+    Q_ASSERT(!"Nie znalezino zadania do usuniecia!?");
+}
+
+void MainWindow::processRemoveTask()
+{
+//    QTreeWidgetItem* itemToRemove = m_taskView->currentItem();
+    QList<QTreeWidgetItem*> itemToRemove = m_taskView->selectedItems();
+    if (!itemToRemove.isEmpty()) {
+        QMessageBox removeBox;
+        removeBox.setText(QString("Napewno chcesz usunac zadanie:<b> %1</b>")
+                          .arg(itemToRemove[0]->text(TASK_N_C)));
+        removeBox.setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
+        removeBox.setDefaultButton(QMessageBox::Cancel);
+        int ret = removeBox.exec();
+        if (ret == QMessageBox::Yes)
+            emit orderRemoveTask(itemToRemove[0]->text(TASK_N_C));
+    } else {
+        QMessageBox noTaskSelected;
+        noTaskSelected.setText("Nie zaznaczono zadania do usuniecia");
+        noTaskSelected.exec();
+    }
+    return;
 }
 
 void MainWindow::addTask(Task* t)
@@ -138,7 +177,7 @@ void MainWindow::addTask(Task* t)
     QTreeWidgetItem* parentItem;
 
     if (t->hasParent()) {
-        parentItem = findItem(t->getParent()->getTaskName());
+        parentItem = findTask(t->getParent()->getTaskName());
 
         if (parentItem) {
             item = new QTreeWidgetItem(parentItem);
@@ -174,17 +213,25 @@ void MainWindow::addTask(Task* t)
     qDebug() << "MainWindow::addTask: dodano zadanie do widoku";
 }
 
-QTreeWidgetItem* MainWindow::findItem(const QString& tName)
+QTreeWidgetItem* MainWindow::findTopLevelTask(const QString& tName)
+{
+    QList<QTreeWidgetItem*> topEntity;
+    topEntity = m_taskView->findItems(tName, Qt::MatchExactly, TASK_N_C);
+    if (!topEntity.isEmpty())
+        return topEntity[0];
+    else
+        return 0;
+}
+
+QTreeWidgetItem* MainWindow::findTask(const QString& tName)
 {
     // Szukanie w top level items
     // Oszczedza kilku przebiegow petli
-    QList<QTreeWidgetItem*> topEntity;
-    topEntity = m_taskView->findItems(tName, Qt::MatchExactly, TASK_N_C);
-    if (!topEntity.isEmpty()) // udalo sie, konczymy.
-        return topEntity[0];
+    QTreeWidgetItem* top = findTopLevelTask(tName);
+    if (top)
+        return top; //udalo sie, konczymy
     
     // Szukanie w pod-zadaniach
-    QTreeWidgetItem* top;
     QTreeWidgetItem* child;
     for (int t = 0; t < m_taskView->topLevelItemCount(); ++t) {
         top = m_taskView->topLevelItem(t);
@@ -199,14 +246,14 @@ QTreeWidgetItem* MainWindow::findItem(const QString& tName)
     return 0;
 }
 
-QTreeWidgetItem* MainWindow::findItem(Task* t)
+QTreeWidgetItem* MainWindow::findTask(Task* t)
 {
-    return findItem(t->getTaskName());
+    return findTask(t->getTaskName());
 }
 
 void MainWindow::newActiveTask(Task* t)
 {
-    QTreeWidgetItem* result = findItem(t);
+    QTreeWidgetItem* result = findTask(t);
     if (!result) {
         qDebug() <<"newActiveTask: nie znaleziono zadania "<<t->getTaskName();
         return;
@@ -228,7 +275,7 @@ void MainWindow::newActiveTask(Task* t)
 void MainWindow::refreshElapsedTime(const QString& task, int newElapsedTime)
 {
     qDebug() << "Wywolanie refreshElapsedTime" << task <<" "<<newElapsedTime;
-    QTreeWidgetItem* result = findItem(task);
+    QTreeWidgetItem* result = findTask(task);
     if (!result) {
         qDebug() << "   BLAD: refreshElapsedTime, nie znaleziono zadania"
                  << task;

@@ -45,6 +45,8 @@ void Timedevel::setTaskModel(TaskManager* manager)
                    m_taskView, SLOT(newActiveTask(Task*)));
         disconnect(m_taskManager, SIGNAL(taskElapsedTimeChanged(const QString&, int)),
                    m_taskView, SLOT(refreshElapsedTime(const QString&, int)));
+        disconnect(m_taskManager, SIGNAL(taskRemoved(const QString&)),
+                   m_taskView, SLOT(removeTaskFromView(const QString&)));
 
         // Wejscie z Widoku
         disconnect(m_taskView, SIGNAL(orderQuit()), qApp, SLOT(quit()));
@@ -54,6 +56,8 @@ void Timedevel::setTaskModel(TaskManager* manager)
                 m_taskManager, SLOT(writeToFile()));
         disconnect(m_taskView, SIGNAL(orderEditTaskName(const QString&,const QString&)),
                 m_taskManager, SLOT(setName(const QString&, const QString&)));
+        disconnect(m_taskView, SIGNAL(orderRemoveTask(const QString&)),
+                m_taskManager, SLOT(remove(const QString&)));
     }
 
     m_taskManager = manager;
@@ -70,6 +74,8 @@ void Timedevel::setTaskModel(TaskManager* manager)
                 m_taskView, SLOT(newActiveTask(Task*)));
         connect(m_taskManager, SIGNAL(taskElapsedTimeChanged(const QString&, int)),
                 m_taskView, SLOT(refreshElapsedTime(const QString&, int)));
+        connect(m_taskManager, SIGNAL(taskRemoved(const QString&)),
+                m_taskView, SLOT(removeTaskFromView(const QString&)));
 
         // Wejscie z Widoku
         connect(m_taskView, SIGNAL(orderQuit()), qApp, SLOT(quit()));
@@ -79,12 +85,14 @@ void Timedevel::setTaskModel(TaskManager* manager)
                 m_taskManager, SLOT(writeToFile()));
         connect(m_taskView, SIGNAL(orderEditTaskName(const QString&,const QString&)),
                 m_taskManager, SLOT(setName(const QString&, const QString&)));
+        connect(m_taskView, SIGNAL(orderRemoveTask(const QString&)),
+                m_taskManager, SLOT(remove(const QString&)));
     }
 }
 
 void Timedevel::setTaskView(MainWindow* taskviewer)
 {
-    m_taskView= taskviewer;
+    m_taskView = taskviewer;
 }
 
 void Timedevel::processFocusChange()

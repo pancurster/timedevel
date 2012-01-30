@@ -59,8 +59,11 @@ void TaskManager::trySetParent(Task* t)
 
 void TaskManager::remove(const QString& taskName)
 {
-    remove(taskName);
-    emit taskRemoved(taskName);
+    if (contains(taskName)) {
+        //TODO nie mam pojecia dlaczego remove nie dziala
+        take(taskName);
+        emit taskRemoved(taskName);
+    }
 }
 
 void TaskManager::setName(const QString& taskName, const QString& newName)
