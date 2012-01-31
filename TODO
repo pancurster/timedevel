@@ -1,0 +1,43 @@
+/** DEV_TODO **/
+
+*
+Dodać widok służacy do wyswietlania informacji o działaniu programu
+
+*
+Oprócz wykrywania zmiany programu poprzez eventy serwera X
+można dodatkowo odpowiednio urzyć klasy QTimerEvent.
+
+*
+Mozliwosc dodania notatki do zadania
+
+*
+Tlumaczenia: tr()
+
+* UI
+Dodać pokazywanie liczby pod-zadań w liście zadań, lacznego czasu zadan.
+Dodać opcję pokazywania dodatkowych kolumn z informacjami o zadaniu.
+
+*
+Przenoszenie zadań sposobem drag&drop
+
+*
+Dodac mozliwosc przypisywania zadaniom ikonek. Ta opcja nie powinna byc zwiazana
+z nadawaniem priorytetow zadaniom ale moga one to sugerowac. To nie jest 
+program zarzadzajacy czasem, raczej samokontrola i statysytka czasu spedzonego
+nad zadaniem/aplikacja :)
+
+*
+Jeśli lista jest nie rozwinięta a znajduje się w niej aktualne zadanie to 
+dodać jakąś informację o tym np. pismem pochyłym lub rozwijac liste.
+
+*
+Wersja dla windowsa
+
+*
+Odczytywanie sciezki z binarka:
+QCoreApplication::applicationDirPath()
+Moze się przydać na windowsie.
+
+*
+Uzupełnić znaczniki const funkcji które nie zmieniają obiektu.
+
