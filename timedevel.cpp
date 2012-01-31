@@ -13,11 +13,10 @@
 #include "focusdetector.h"
 
 Timedevel::Timedevel(TaskManager* tm, MainWindow* view,
-                     FocusDetector* fdo, QObject* parent):
+                     QObject* parent):
     QObject(parent),
     m_taskManager(0),
-    m_taskView(view),
-    m_focusDetector(fdo)
+    m_taskView(view)
 {
     setTaskModel(tm);
     m_taskManager->readFromFile();
@@ -29,15 +28,23 @@ Timedevel::~Timedevel()
     m_taskManager->writeToFile();
 }
 
+void Timedevel::addFocusActivator(FocusActivator* f_activator)
+{
+    connect(f_activator, SIGNAL(focusChanged()),
+            this, SLOT(processFocusChange()));
+}
+
+void Timedevel::removeFocusActivator(FocusActivator* f_activator)
+{
+    disconnect(f_activator, SIGNAL(focusChanged()),
+               this, SLOT(processFocusChange()));
+}
+
 void Timedevel::setTaskModel(TaskManager* manager)
 {
     if (m_taskManager == manager)
         return;
     if (m_taskManager) {
-        // Wejscie z FocusDetector
-        disconnect(m_focusDetector->signalHandle, SIGNAL(focusChanged()),
-                   this, SLOT(processFocusChange()));
-
         // Wejscie z Modelu 
         disconnect(m_taskManager, SIGNAL(taskAdded(Task*)),
                    m_taskView, SLOT(addTask(Task*)));
@@ -64,10 +71,6 @@ void Timedevel::setTaskModel(TaskManager* manager)
 
     m_taskManager = manager;
     if (m_taskManager) {
-        // Wejscie z FocusDetector
-        connect(m_focusDetector->signalHandle, SIGNAL(focusChanged()),
-                this, SLOT(processFocusChange()));
-
         // Wejscie z Modelu
         // przedrostek announce przy syg. wychodzacych z modelu ?
         connect(m_taskManager, SIGNAL(taskAdded(Task*)),

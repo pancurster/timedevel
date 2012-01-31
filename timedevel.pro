@@ -12,5 +12,5 @@ QT += gui xml core
 QXT += core gui
 
 # Input
-HEADERS += mainwindow.h focusdetector.h windowattr.h task.h tasklistwriter.h tasklistxmlhandler.h tasklistreader.h taskmanager.h timedevel.h focussignal.h
-SOURCES += main.cpp focusdetector.cpp mainwindow.cpp windowattr.cpp task.cpp tasklistwriter.cpp tasklistxmlhandler.cpp tasklistreader.cpp taskmanager.cpp timedevel.cpp focussignal.cpp
+HEADERS += mainwindow.h focusdetector.h windowattr.h task.h tasklistwriter.h tasklistxmlhandler.h tasklistreader.h taskmanager.h timedevel.h focussignal.h focusactivator.h timeractivator.h
+SOURCES += main.cpp focusdetector.cpp mainwindow.cpp windowattr.cpp task.cpp tasklistwriter.cpp tasklistxmlhandler.cpp tasklistreader.cpp taskmanager.cpp timedevel.cpp focussignal.cpp focusactivator.cpp timeractivator.cpp

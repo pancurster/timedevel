@@ -5,7 +5,7 @@
 
 class TaskManager;
 class MainWindow;
-class FocusDetector;
+class FocusActivator;
 
 class Timedevel : public QObject {
 
@@ -13,7 +13,7 @@ class Timedevel : public QObject {
 
     public:
         Timedevel(TaskManager* tm, MainWindow* view,
-                  FocusDetector* fod, QObject* parent = 0);
+                  QObject* parent = 0);
         ~Timedevel();
 
         /** Ustawia model danych */
@@ -23,6 +23,9 @@ class Timedevel : public QObject {
         //TODO Kontener? Kilka widokow? (Ma byc wyswietlanie 
         //statystyk jako grafiki.
         void setTaskView(MainWindow* taskviewer);
+
+        void addFocusActivator(FocusActivator* f_activator);
+        void removeFocusActivator(FocusActivator* f_activator);
 
     public slots:
         /** Odczytuje aktualnie aktywne okno i akutalizuje 
@@ -38,8 +41,6 @@ class Timedevel : public QObject {
         TaskManager* m_taskManager;
         /** MVC - widok */
         MainWindow* m_taskView;
-
-        FocusDetector* m_focusDetector;
 };
 
 #endif // TIMEDEVEL_H

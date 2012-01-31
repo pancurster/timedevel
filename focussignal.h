@@ -1,13 +1,13 @@
 #ifndef FOCUS_SIGNAL_H
 #define FOCUS_SIGNAL_H
 
-#include <QObject>
+#include "focusactivator.h"
 
 /** Obiekt wysyła sygnał zmiany focusa.
  * Urzywany przez klasę FocusDetector.
  * @see FocusDetector
  */
-class FocusSignal : public QObject {
+class FocusSignal : public FocusActivator {
 
     Q_OBJECT
 

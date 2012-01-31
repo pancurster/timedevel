@@ -1,6 +1,6 @@
 #include "focussignal.h"
 
-FocusSignal::FocusSignal(QObject* parent) : QObject(parent)
+FocusSignal::FocusSignal(QObject* parent) : FocusActivator(parent)
 {
 }
 
