@@ -4,10 +4,6 @@
 Dodać widok służacy do wyswietlania informacji o działaniu programu
 
 *
-Oprócz wykrywania zmiany programu poprzez eventy serwera X
-można dodatkowo odpowiednio urzyć klasy QTimerEvent.
-
-*
 Mozliwosc dodania notatki do zadania
 
 *

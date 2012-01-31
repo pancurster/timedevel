@@ -31,9 +31,7 @@
 
 MainWindow::MainWindow(QWidget* parent):
     QMainWindow(parent),
-    m_activeItem(0),
-    m_editedTaskName(""),
-    m_editorActive(false)
+    m_activeItem(0)
 {
     qDebug() << "Konstruktor MainWindow";
 
@@ -72,6 +70,7 @@ void MainWindow::setUi()
     m_taskView->setColumnWidth(APP_N_C, 160);
     m_taskView->hideColumn(PID_C);
     m_taskView->hideColumn(WID_C);
+    m_taskView->setExpandsOnDoubleClick(true);
     mainLayout->addWidget(m_taskView);
 
     m_trayIcon = new QSystemTrayIcon(QIcon("icon/icon64.png"));
@@ -109,8 +108,12 @@ void MainWindow::setToolbar()
     toolbarMain->addAction(m_findTaskAction);
     toolbarMain->addAction(m_perferencesAction);
 
+    QWidget* spacer = new QWidget();
+    spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
     QToolBar* toolbarQuit = new QToolBar("Quit", this);
     toolbarQuit->setIconSize(QSize(48,48));
+    toolbarQuit->addWidget(spacer);
     toolbarQuit->addAction(m_quitAction);
 
     addToolBar(Qt::RightToolBarArea, toolbarMain);
@@ -123,15 +126,18 @@ connect(m_newTaskAction,   SIGNAL(triggered()),
         this, SLOT(processNewTask())); 
 connect(m_deleteTaskAction,SIGNAL(triggered()),
         this, SLOT(processRemoveTask()));
+connect(m_editTaskAction,  SIGNAL(triggered()),
+        this, SLOT(processEditTaskName()));
 connect(m_findTaskAction,  SIGNAL(triggered()),this,SIGNAL(orderFindTask()));
-connect(m_editTaskAction,  SIGNAL(triggered()),this,SIGNAL(orderEditTaskName()));
 connect(m_perferencesAction,SIGNAL(triggered()),this,SIGNAL(orderPreferences()));
 connect(m_quitAction, SIGNAL(triggered()), this, SIGNAL(orderQuit()));
 
+/*
     connect(m_taskView,SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)),
             this, SLOT(editTaskName(QTreeWidgetItem*, int)));
     connect(m_taskView,SIGNAL(itemChanged(QTreeWidgetItem*, int)),
             this, SLOT(endEditTaskName(QTreeWidgetItem*, int)));
+*/
 
     connect(m_trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
             this, SLOT(trayIconClicked(QSystemTrayIcon::ActivationReason)));
@@ -194,6 +200,35 @@ void MainWindow::processRemoveTask()
         noTaskSelected.exec();
     }
     return;
+}
+
+void MainWindow::processEditTaskName()
+{
+    bool ok = false;
+    QString newName("");
+    QList<QTreeWidgetItem*> itemToRename = m_taskView->selectedItems();
+
+    if (!itemToRename.isEmpty()) {
+        newName = QInputDialog::getText(this, tr("Zmiana nazwy zadania"),
+                  tr("Nowa nazwa: "), QLineEdit::Normal,
+                  QString("%1").arg(itemToRename[0]->text(TASK_N_C)), &ok);
+
+        if (!newName.isEmpty() && newName != itemToRename[0]->text(TASK_N_C)) {
+            emit orderEditTaskName(itemToRename[0]->text(TASK_N_C), newName);
+            itemToRename[0]->setText(TASK_N_C, newName);
+        }
+        return;
+
+    } else {
+        QMessageBox noTaskSelected;
+        noTaskSelected.setText("Nie zaznaczono zadania");
+        noTaskSelected.setWindowTitle("Zaznacz zadanie");
+        noTaskSelected.setIcon(QMessageBox::Information);
+        noTaskSelected.exec();
+        return;
+    }
+
+    Q_ASSERT(!"Program nie mogl osiagnac tego punktu");
 }
 
 void MainWindow::addTask(Task* t)
@@ -292,6 +327,8 @@ void MainWindow::newActiveTask(Task* t)
         font = m_activeItem->font(TASK_N_C);
         font.setBold(false);
         m_activeItem->setFont(TASK_N_C, font);
+        statusBar()->showMessage(QString("Poprzednie aktywne zadanie: %1")
+                                 .arg(m_activeItem->text(TASK_N_C)));
     }
 
     font = result->font(TASK_N_C);
@@ -321,30 +358,6 @@ void MainWindow::trayIconClicked(QSystemTrayIcon::ActivationReason reason)
             this->hide();
     }
 }
-
-void MainWindow::editTaskName(QTreeWidgetItem* item, int /*column*/)
-{
-    // potrzebne do updejtu w modelu (nazwa zad. - klucz)
-    m_editedTaskName = item->text(TASK_N_C);
-    m_taskView->openPersistentEditor(item, TASK_N_C);
-    m_editorActive = true;
-}
-
-void MainWindow::endEditTaskName(QTreeWidgetItem* item, int /*column*/)
-{
-    // Slot/funkcja ta, polaczona jest z sygnalem itemChanged klasy typu
-    // QTreeWidget i wywoływana powinna być w przypadku kiedy zadanie edytowane
-    // jest przez urzytkownika. Zmienna m_editorActive wprowadzona poniewaz
-    // przy odczytywaniu przy starcie wczesniej zapisanych zadan wypełniana
-    // jest składowa m_taskView co powoduje emitowanie sygnału i wywołanie tej
-    // funkcji - prowadzac do błedu.
-    if (m_editorActive == true ) {
-        m_taskView->closePersistentEditor(item, TASK_N_C);
-        emit orderEditTaskName(m_editedTaskName, item->text(TASK_N_C));
-        m_editorActive = false;
-    }
-}
-
 
 QString MainWindow::toMinSec(int wholeTime, const QString spliter)
 {

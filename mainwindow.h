@@ -26,14 +26,13 @@ class MainWindow : public QMainWindow {
         void addTask(Task* t);
         void newActiveTask(Task* t);
         void refreshElapsedTime(const QString& task, int newElapsedTime);
-
-        void editTaskName(QTreeWidgetItem* item, int column);
-        void endEditTaskName(QTreeWidgetItem* item, int column);
+        void removeTaskFromView(const QString& taskName);
         void trayIconClicked(QSystemTrayIcon::ActivationReason reason);
         
+    private slots:
         void processRemoveTask();   // emits orderRemoveTask(...)
-        void removeTaskFromView(const QString& taskName);
         void processNewTask();
+        void processEditTaskName();
 
     signals:
         void orderQuit();
@@ -66,8 +65,6 @@ class MainWindow : public QMainWindow {
         QAction*         m_quitAction;
 
         QTreeWidgetItem* m_activeItem;      //Aktualnie aktywne zadanie
-        QString          m_editedTaskName;  //Nazwa edytowanego zadania
-        bool             m_editorActive;    //Flaga aktywnego edytora
 
         // Kolejnosc pol w wyliczeniu wyznacza kolejnosc w m_taskView typu
         // QTreeWidget. Zabezpiecza przed rzaglerka cygerkami w funkcjach
