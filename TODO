@@ -1,6 +1,10 @@
 /** DEV_TODO **/
 
 *
+Niektóre okna nie posiadaja pola WM_NAME(STRING) i nie można pobrać tytułu
+okna. Może lepiej odczytywać pole _NET_WM_NAME(...  ?
+
+*
 Dodać widok służacy do wyswietlania informacji o działaniu programu
 
 *

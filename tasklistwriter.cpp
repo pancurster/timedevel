@@ -72,7 +72,7 @@ int TaskListWriter::write()
     if (stream->hasError())
         return 1;
     */
-    qDebug() << "Zakonczono dzialanie tasklistwriter::write sukcesem";
+    qDebug() << "Zakonczono dzialanie"<< Q_FUNC_INFO << "sukcesem";
     return 0;
 }
 

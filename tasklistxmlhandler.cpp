@@ -25,7 +25,7 @@ TaskListXmlHandler::TaskListXmlHandler(TaskManager* tl) :
 
 bool TaskListXmlHandler::startDocument()
 {
-    qDebug() << "Znacznik - startDocument";
+    qDebug() << Q_FUNC_INFO;
     actual_token = DOC_START;
     return true;
 }
@@ -35,7 +35,7 @@ bool TaskListXmlHandler::startElement( const QString& ,
                                        const QString& qName,
                                        const QXmlAttributes& )
 {
-    qDebug() << "startElement " << qName;
+    qDebug() << Q_FUNC_INFO << "Element " << qName;
     if        (qName == TOKEN_top_task) {
         actual_token = TOP_TASK;
 
@@ -66,7 +66,7 @@ bool TaskListXmlHandler::startElement( const QString& ,
 
 bool TaskListXmlHandler::characters(const QString& text)
 {
-    qDebug() << "characters " << text;
+    qDebug() << Q_FUNC_INFO << "characters " << text;
     switch (actual_token) {
         case DOC_START:
             break;
@@ -94,11 +94,11 @@ bool TaskListXmlHandler::endElement( const QString& ,
                                      const QString& ,
                                      const QString& qName)
 {
-    qDebug() << "endElement " << qName;
+    qDebug() << Q_FUNC_INFO << "Element " << qName;
 
     if (qName == TOKEN_task) {
         if ( ! isDataCorrect()) {
-            qDebug() << "   BLAD parsowania pliku!";
+            qDebug() << "   BLAD parsowania pliku!" << Q_FUNC_INFO;
             /*Jeden niepoprawny wpis nie musi przeszkodzic w dalszym czytaniu*/
 //            return false;
         }
@@ -112,7 +112,8 @@ bool TaskListXmlHandler::endElement( const QString& ,
                 m_temp_task->setParent(parent_t);
             } else {
                 qDebug() <<"   BLAD: Nie znaleziono rodzica "
-                         <<m_temp_task_parent <<" zadania: "<<m_temp_task_name;
+                         <<m_temp_task_parent <<" zadania: "<<m_temp_task_name
+                         <<Q_FUNC_INFO;
             }
         }
 
