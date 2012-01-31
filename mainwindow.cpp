@@ -68,7 +68,10 @@ void MainWindow::setUi()
     labels[WID_C] = QString("WId");
     m_taskView->setHeaderLabels(labels);
     m_taskView->setColumnWidth(ACTIVE_C, 40);
-    m_taskView->setColumnWidth(TASK_N_C, 60);
+    m_taskView->setColumnWidth(TASK_N_C, 350);
+    m_taskView->setColumnWidth(APP_N_C, 160);
+    m_taskView->hideColumn(PID_C);
+    m_taskView->hideColumn(WID_C);
     mainLayout->addWidget(m_taskView);
 
     m_trayIcon = new QSystemTrayIcon(QIcon("icon/icon64.png"));
@@ -217,6 +220,7 @@ void MainWindow::addTask(Task* t)
     item->setText(TASK_N_C, t->getTaskName());
     item->setText(ELAPS_C, time);
     item->setText(APP_N_C, t->getAppName());
+    item->setIcon(ACTIVE_C, QIcon("icon/prior_not_known.png"));
 
     if (t->hasWAttr()) {
         const WindowAttr* wa = t->getWAttr();
@@ -230,7 +234,8 @@ void MainWindow::addTask(Task* t)
         item->setChildIndicatorPolicy(
                         QTreeWidgetItem::DontShowIndicatorWhenChildless);
         m_taskView->insertTopLevelItem(m_taskView->topLevelItemCount(), item);
-        m_taskView->resizeColumnToContents(1);
+// Moze bedzie to opcja?        
+//        m_taskView->resizeColumnToContents(1);
     }
 
     qDebug() << "MainWindow::addTask: dodano zadanie do widoku";
