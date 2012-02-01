@@ -2,6 +2,8 @@
 #define FIND_DIALOG_H
 
 #include <QDialog>
+#include <QListWidgetItem>
+#include <QList>
 
 class QTreeWidget;
 class QLabel;
@@ -19,14 +21,18 @@ class FindTaskDialog : public QDialog {
         FindTaskDialog(QTreeWidget* t, QWidget* parent = 0);
         ~FindTaskDialog();
 
+        QList<QListWidgetItem*> getReturnValue();
+
     private slots:
         void enableFindButton(const QString&);
         void findTask();
+        void selectItemsAndDone();
 
     private:
         void fillComboBox();
 
         QTreeWidget* treeWidget;
+        QList<QListWidgetItem*> retValue;
 
         QLabel*      m_labelTaskName;
         QLabel*      m_labelAppName;

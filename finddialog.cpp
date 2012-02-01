@@ -1,7 +1,6 @@
 #include <QDebug>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
-#include <QList>
 #include <QLabel>
 #include <QListWidget>
 #include <QPushButton>
@@ -9,30 +8,32 @@
 #include <QComboBox>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QMessageBox>
 
 #include "finddialog.h"
 
 FindTaskDialog::FindTaskDialog(QTreeWidget* t, QWidget* parent) :
     QDialog(parent), treeWidget(t)
 {
-    m_labelTaskName = new QLabel(tr("&Szukaj zadania:"));
+    m_labelTaskName = new QLabel(tr("Szukaj zadania:"));
     m_editTaskName = new QLineEdit;
     m_labelTaskName->setBuddy(m_editTaskName);
 
-    m_labelAppName = new QLabel(tr("Nazwa aplikacji"));
+    m_labelAppName = new QLabel(tr("Szukaj w:"));
     m_comboAppName = new QComboBox;
     fillComboBox();
 
-    m_buttonFind = new QPushButton(tr("Znajdz"));
+    m_buttonFind = new QPushButton(tr("&Szukaj"));
     m_buttonFind->setDefault(true);
     m_buttonFind->setEnabled(false);
 
-    m_buttonSelect = new QPushButton(tr("Zaznacz\n i\n Zamknij"));
+    m_buttonSelect = new QPushButton(tr("&Pokaz\n i\n Zamknij"));
     m_buttonSelect->setEnabled(false);
 
     m_listTask = new QListWidget;
+    m_listTask->setSelectionMode(QAbstractItemView::MultiSelection);
 
-    m_buttonClose = new QPushButton(tr("Anuluj"));
+    m_buttonClose = new QPushButton(tr("&Anuluj"));
 
     QHBoxLayout* layout_taskname = new QHBoxLayout;
     layout_taskname->addWidget(m_labelTaskName);
@@ -64,6 +65,8 @@ FindTaskDialog::FindTaskDialog(QTreeWidget* t, QWidget* parent) :
 
     connect(m_editTaskName, SIGNAL(textChanged(const QString&)),
             this, SLOT(enableFindButton(const QString&)));
+    connect(m_buttonSelect, SIGNAL(clicked()),
+            this, SLOT(selectItemsAndDone()));
     connect(m_buttonFind, SIGNAL(clicked()), this, SLOT(findTask()));
     connect(m_buttonClose, SIGNAL(clicked()), this, SLOT(close()));
 
@@ -89,20 +92,35 @@ void FindTaskDialog::enableFindButton(const QString&)
     return;
 }
 
+QList<QListWidgetItem*> FindTaskDialog::getReturnValue()
+{
+    return retValue;
+}
+
+void FindTaskDialog::selectItemsAndDone()
+{
+    retValue = m_listTask->selectedItems();
+    if (retValue.isEmpty()) {
+        QMessageBox::warning(this, tr("Nie znaznaczono zadania..."),
+            tr("Nie zaznaczono zadania. Jesli chcesz wycofac sie z szukania"
+            " kliknij <b>Anuluj</b> w oknie szukania"));
+        return;
+    }
+    done(0);
+}
+
 void FindTaskDialog::findTask()
 {
-    qDebug() << "NACISNIETO FIND";
     m_listTask->clear();
     m_buttonFind->setEnabled(false);
-    QString querry = m_editTaskName->text();
-    qDebug() << "querry: " << querry;
+    QString query = m_editTaskName->text();
 
     bool finded = false;
     QTreeWidgetItem* top;
     QTreeWidgetItem* child;
     for (int t = 0; t < treeWidget->topLevelItemCount(); ++t) {
         top = treeWidget->topLevelItem(t);
-        if (top->text(1).contains(querry, Qt::CaseInsensitive)) {
+        if (top->text(1).contains(query, Qt::CaseInsensitive)) {
             m_listTask->addItem(top->text(1));
             finded = true;
         }
@@ -110,7 +128,7 @@ void FindTaskDialog::findTask()
         if (top->childCount() > 0) {
             for (int c = 0; c < top->childCount(); ++c) {
                 child = top->child(c);
-                if (child->text(1).contains(querry, Qt::CaseInsensitive)) {
+                if (child->text(1).contains(query, Qt::CaseInsensitive)) {
                     m_listTask->addItem(child->text(1));
                     finded = true;
                 }
@@ -120,6 +138,12 @@ void FindTaskDialog::findTask()
 
     if (!finded)
         m_listTask->addItem(tr("Nic nie znaleziono"));
+    else
+        m_buttonSelect->setEnabled(true);
+
+    // Automatyczne zaznaczanie pierwszego zadania na liscie: zabezpiecza przed
+    // errorem
+    m_listTask->setCurrentRow(0);
 }
 
 void FindTaskDialog::fillComboBox()

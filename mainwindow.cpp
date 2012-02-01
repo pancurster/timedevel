@@ -316,11 +316,28 @@ QTreeWidgetItem* MainWindow::findTask(Task* t)
 void MainWindow::processFindTask()
 {
     FindTaskDialog* find = new FindTaskDialog(m_taskView);
+
     //fix. Dodano wylaczanie modulu detekcji focusa poniewaz powodowal on
     //bledne dzialanie comboboxa w okienku szukania.
     emit offFocusDetector();
     find->exec();
     emit onFocusDetector();
+
+    // Odznaczanie jakiegokolwiek itema, jesli zaznaczony
+    m_taskView->setCurrentItem(0);
+    // Potrzebne multi zaznaczanie. Wylaczane nizej.
+    m_taskView->setSelectionMode(QAbstractItemView::MultiSelection);
+
+    QList<QListWidgetItem*> list = find->getReturnValue();
+    int i;
+    for (i = 0; i < list.size(); ++i) {
+        QTreeWidgetItem* findedItem = findTask(list[i]->text());
+        if (findedItem)
+            m_taskView->setCurrentItem(findedItem);
+    }
+
+    m_taskView->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    statusBar()->showMessage(QString(tr("Zaznaczono %1 zadania")).arg(i));
 }
 
 void MainWindow::newActiveTask(Task* t)
