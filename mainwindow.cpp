@@ -28,6 +28,7 @@
 #include "windowattr.h"
 #include "task.h"
 #include "tasklistreader.h"
+#include "finddialog.h"
 
 MainWindow::MainWindow(QWidget* parent):
     QMainWindow(parent),
@@ -71,6 +72,7 @@ void MainWindow::setUi()
     m_taskView->hideColumn(PID_C);
     m_taskView->hideColumn(WID_C);
     m_taskView->setExpandsOnDoubleClick(true);
+    m_taskView->setSelectionMode(QAbstractItemView::ExtendedSelection);
     mainLayout->addWidget(m_taskView);
 
     m_trayIcon = new QSystemTrayIcon(QIcon("icon/icon64.png"));
@@ -130,7 +132,8 @@ void MainWindow::setConnections()
             this, SLOT(processRemoveTask()));
     connect(m_editTaskAction,  SIGNAL(triggered()),
             this, SLOT(processEditTaskName()));
-    connect(m_findTaskAction,  SIGNAL(triggered()),this,SIGNAL(orderFindTask()));
+    connect(m_findTaskAction,  SIGNAL(triggered()),
+            this, SLOT(processFindTask()));
     connect(m_perferencesAction,SIGNAL(triggered()),this,SIGNAL(orderPreferences()));
     connect(m_quitAction, SIGNAL(triggered()), this, SIGNAL(orderQuit()));
 
@@ -308,6 +311,16 @@ QTreeWidgetItem* MainWindow::findTask(const QString& tName)
 QTreeWidgetItem* MainWindow::findTask(Task* t)
 {
     return findTask(t->getTaskName());
+}
+
+void MainWindow::processFindTask()
+{
+    FindTaskDialog* find = new FindTaskDialog(m_taskView);
+    //fix. Dodano wylaczanie modulu detekcji focusa poniewaz powodowal on
+    //bledne dzialanie comboboxa w okienku szukania.
+    emit offFocusDetector();
+    find->exec();
+    emit onFocusDetector();
 }
 
 void MainWindow::newActiveTask(Task* t)

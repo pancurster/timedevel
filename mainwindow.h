@@ -33,6 +33,7 @@ class MainWindow : public QMainWindow {
         void processRemoveTask();   // emits orderRemoveTask(...)
         void processNewTask();
         void processEditTaskName();
+        void processFindTask();
 
     signals:
         void orderQuit();
@@ -43,6 +44,9 @@ class MainWindow : public QMainWindow {
         void orderRemoveTask(const QString& taskName);
         void orderFindTask(const QString& taskName);
         void orderPreferences();
+
+        void offFocusDetector();
+        void onFocusDetector();
 
     private:
         void setUi();

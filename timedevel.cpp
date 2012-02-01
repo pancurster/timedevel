@@ -13,10 +13,11 @@
 #include "focusdetector.h"
 
 Timedevel::Timedevel(TaskManager* tm, MainWindow* view,
-                     QObject* parent):
+                     FocusDetector* fdo, QObject* parent):
     QObject(parent),
     m_taskManager(0),
-    m_taskView(view)
+    m_taskView(view),
+    m_focusDetector(fdo)
 {
     setTaskModel(tm);
     m_taskManager->readFromFile();
@@ -67,6 +68,10 @@ void Timedevel::setTaskModel(TaskManager* manager)
                 m_taskManager, SLOT(remove(const QString&)));
         disconnect(m_taskView, SIGNAL(orderNewTask(const QString&)),
                 m_taskManager, SLOT(add(const QString&)));
+        disconnect(m_taskView, SIGNAL(offFocusDetector()),
+                this, SLOT(offFocusDetector()));
+        disconnect(m_taskView, SIGNAL(onFocusDetector()),
+                this, SLOT(onFocusDetector()));
     }
 
     m_taskManager = manager;
@@ -94,7 +99,21 @@ void Timedevel::setTaskModel(TaskManager* manager)
                 m_taskManager, SLOT(remove(const QString&)));
         connect(m_taskView, SIGNAL(orderNewTask(const QString&)),
                 m_taskManager, SLOT(add(const QString&)));
+        connect(m_taskView, SIGNAL(offFocusDetector()),
+                this, SLOT(offFocusDetector()));
+        connect(m_taskView, SIGNAL(onFocusDetector()),
+                this, SLOT(onFocusDetector()));
     }
+}
+
+void Timedevel::offFocusDetector()
+{
+    qxtApp->removeNativeEventFilter(m_focusDetector);
+}
+
+void Timedevel::onFocusDetector()
+{
+    qxtApp->installNativeEventFilter(m_focusDetector);
 }
 
 void Timedevel::setTaskView(MainWindow* taskviewer)

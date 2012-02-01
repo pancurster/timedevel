@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
     // Singleton TaskManager
     TaskManager* tm = TaskManager::getInstance();
     // controler-> setModel, setView
-    Timedevel* taskControl = new Timedevel(tm, mainWindow);
+    Timedevel* taskControl = new Timedevel(tm, mainWindow, fdo);
     taskControl->addFocusActivator(fdo->signalHandle);
     taskControl->addFocusActivator(t_activator);
 

@@ -5,6 +5,7 @@
 
 class TaskManager;
 class MainWindow;
+class FocusDetector;
 class FocusActivator;
 
 class Timedevel : public QObject {
@@ -13,7 +14,7 @@ class Timedevel : public QObject {
 
     public:
         Timedevel(TaskManager* tm, MainWindow* view,
-                  QObject* parent = 0);
+                  FocusDetector* fdo, QObject* parent = 0);
         ~Timedevel();
 
         /** Ustawia model danych */
@@ -31,8 +32,10 @@ class Timedevel : public QObject {
         /** Odczytuje aktualnie aktywne okno i akutalizuje 
          *  dane o aktywynym oknie w mainwidget */
         void processFocusChange();
-        //void focus(QWidget*, QWidget*);
 
+        /// Wlaczanie, wylaczanie detekcji zmiany focusa
+        void offFocusDetector();
+        void onFocusDetector();
     private:
         /** Ma pobierac info o oknie. Narazie zle dziala :) */
         int getActiveWId();
@@ -41,6 +44,8 @@ class Timedevel : public QObject {
         TaskManager* m_taskManager;
         /** MVC - widok */
         MainWindow* m_taskView;
+
+        FocusDetector* m_focusDetector;
 };
 
 #endif // TIMEDEVEL_H

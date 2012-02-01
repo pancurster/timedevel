@@ -18,6 +18,10 @@ Dodać pokazywanie liczby pod-zadań w liście zadań, lacznego czasu zadan.
 Dodać opcję pokazywania dodatkowych kolumn z informacjami o zadaniu.
 
 *
+Oddzielić QTreeWidget od MainWindow.
+m_taskView powinno byc oddzielna klasa z jej własnym interfejsem
+
+*
 Przenoszenie zadań sposobem drag&drop
 
 *
