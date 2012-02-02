@@ -13,7 +13,7 @@ class WindowAttr {
          */
         WindowAttr();
 
-        /** Zwraca ID okna w liczbie o podstawie 10 */
+        /** Zwraca ID okna w postaci liczby o podstawie 10 */
         int getWId() const;
 
         /** Zwraca Pid procesu okna */
@@ -33,16 +33,16 @@ class WindowAttr {
          */
         QString exec(QString cmd);
 
-        /** Uaktualnia pole m_WId */
+        /// Odszukuje WindowID (X11) okna
         void findActiveWindowWId();
 
-        /** Uaktualnia pole m_PID */
+        /// Odszukuje PID programu
         void findPid(int WId);
 
-        /** Uaktualnia pole m_WName */
+        /// Odszukuje tytul okna
         void findWName(int WId);
 
-        /** Uaktualnia pole m_AppName */
+        /// Odczytuje z /proc nazwe programu
         void findAppName();
 
         int m_WId;

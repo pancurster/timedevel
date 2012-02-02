@@ -23,6 +23,11 @@ WindowAttr::WindowAttr() :
     findPid(m_WId);
     findWName(m_WId);
     findAppName();
+
+    // fix. Jesli nie odczytano tytulu okna to lepiej zeby 'cos' bylo wpisane.
+    if (m_WName.isEmpty()) {
+        m_WName = m_AppName;
+    }
 }
 
 QString WindowAttr::exec(QString cmd)
