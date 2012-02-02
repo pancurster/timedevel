@@ -158,7 +158,7 @@ void MainWindow::removeTaskFromView(const QString& taskName)
     QTreeWidgetItem* toRemove;
     QTreeWidgetItem* removed;
     int index = -1;
-    toRemove = findTopLevelTask(taskName);
+    toRemove = findTopLevelItem(taskName);
     if (toRemove) {
         index   = m_taskView->indexOfTopLevelItem(toRemove);
         removed = m_taskView->takeTopLevelItem(index);
@@ -166,7 +166,7 @@ void MainWindow::removeTaskFromView(const QString& taskName)
         return;
     }
 
-    toRemove = findTask(taskName);
+    toRemove = findItem(taskName);
     if (toRemove) {
         toRemove->parent()->removeChild(toRemove);
         delete toRemove;
@@ -237,7 +237,7 @@ void MainWindow::addTask(Task* t)
     QTreeWidgetItem* parentItem;
 
     if (t->hasParent()) {
-        parentItem = findTask(t->getParent()->getTaskName());
+        parentItem = findItem(t->getParent()->getTaskName());
 
         if (parentItem) {
             item = new QTreeWidgetItem(parentItem);
@@ -275,7 +275,7 @@ void MainWindow::addTask(Task* t)
     qDebug() << Q_FUNC_INFO << "Dodano zadanie do widoku";
 }
 
-QTreeWidgetItem* MainWindow::findTopLevelTask(const QString& tName)
+QTreeWidgetItem* MainWindow::findTopLevelItem(const QString& tName)
 {
     QList<QTreeWidgetItem*> topEntity;
     topEntity = m_taskView->findItems(tName, Qt::MatchExactly, TASK_N_C);
@@ -285,11 +285,11 @@ QTreeWidgetItem* MainWindow::findTopLevelTask(const QString& tName)
         return 0;
 }
 
-QTreeWidgetItem* MainWindow::findTask(const QString& tName)
+QTreeWidgetItem* MainWindow::findItem(const QString& tName)
 {
     // Szukanie w top level items
     // Oszczedza kilku przebiegow petli
-    QTreeWidgetItem* top = findTopLevelTask(tName);
+    QTreeWidgetItem* top = findTopLevelItem(tName);
     if (top)
         return top; //udalo sie, konczymy
     
@@ -308,9 +308,9 @@ QTreeWidgetItem* MainWindow::findTask(const QString& tName)
     return 0;
 }
 
-QTreeWidgetItem* MainWindow::findTask(Task* t)
+QTreeWidgetItem* MainWindow::findItem(Task* t)
 {
-    return findTask(t->getTaskName());
+    return findItem(t->getTaskName());
 }
 
 void MainWindow::processFindTask()
@@ -331,7 +331,7 @@ void MainWindow::processFindTask()
     QList<QListWidgetItem*> list = find->getReturnValue();
     int i;
     for (i = 0; i < list.size(); ++i) {
-        QTreeWidgetItem* findedItem = findTask(list[i]->text());
+        QTreeWidgetItem* findedItem = findItem(list[i]->text());
         if (findedItem)
             m_taskView->setCurrentItem(findedItem);
     }
@@ -342,7 +342,7 @@ void MainWindow::processFindTask()
 
 void MainWindow::newActiveTask(Task* t)
 {
-    QTreeWidgetItem* result = findTask(t);
+    QTreeWidgetItem* result = findItem(t);
     if (!result) {
         qDebug() <<Q_FUNC_INFO << "Nie znaleziono zadania "<<t->getTaskName();
         return;
@@ -366,7 +366,7 @@ void MainWindow::newActiveTask(Task* t)
 void MainWindow::refreshElapsedTime(const QString& task, int newElapsedTime)
 {
     qDebug() << Q_FUNC_INFO << task <<" "<<newElapsedTime;
-    QTreeWidgetItem* result = findTask(task);
+    QTreeWidgetItem* result = findItem(task);
     if (!result) {
         qDebug() << "   BLAD: nie znaleziono zadania" << task << Q_FUNC_INFO;
         return;

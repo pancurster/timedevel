@@ -53,9 +53,9 @@ class MainWindow : public QMainWindow {
         void setToolbar();
         void setConnections();
 
-        QTreeWidgetItem* findTask(const QString& tName);
-        QTreeWidgetItem* findTask(Task* t);
-        QTreeWidgetItem* findTopLevelTask(const QString& taskName);
+        QTreeWidgetItem* findItem(const QString& tName);
+        QTreeWidgetItem* findItem(Task* t);
+        QTreeWidgetItem* findTopLevelItem(const QString& taskName);
         QString          toMinSec(int counter, const QString spliter = ":");
 
         QTreeWidget*     m_taskView;        //Main widget
