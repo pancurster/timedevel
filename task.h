@@ -1,9 +1,10 @@
 #ifndef TASK_H
 #define TASK_H
 
+class Task;
 class QTime;
 class QString;
-class Task;
+class QList<Task>;
 class WindowAttr;
 
 /**
@@ -38,6 +39,8 @@ class Task {
         int getElapsedTime();
         /** Zwraca sumaryczny czas spedzony na zadaniu jako QString */
         QString getElapsedTimeString();
+        /// Zwraca sumaryczny czas pod-zadan
+        int getElpasedChildrenTime();
         /** Zwraca paretn task zadania */
         Task* getParent();
         /** Zwraca nazwe zadania */
@@ -74,6 +77,13 @@ class Task {
          * @param t wskaźnik do zadania nadrzędnego/rodzica.
          */
         void setParent(Task* t);
+
+        /// Dodaje pod-zadanie
+        void addChildTask(Task* t);
+        /// Usuwa pod-zadanie
+        void removeChildTask(Task* t);
+        /// Zwraca liste dzieci
+        QList<Task*> getChildren();
         /** Zaczyna zliczanie czasu dla zadania */
         void startTimer();
         /** Zatrzymuje zliczanie czasu */
@@ -88,6 +98,7 @@ class Task {
         WindowAttr* m_wattr;///< Jesli zadanie jest aplikacja, posiada atrybuty
                             ///< okna (PID, WId itp).
         Task* m_parentTask; ///< Wskaźnik do zadania nadrzędnego/rodzica.
+        QList<Task*>* m_childrenTask;
 };
 
 #endif // TASK_H

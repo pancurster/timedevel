@@ -1,14 +1,16 @@
 /** DEV_TODO **/
 *
-Niektóre okna nie posiadaja pola WM_NAME(STRING) i nie można pobrać tytułu
-okna. Może lepiej odczytywać pole _NET_WM_NAME(...  ?
+Przenoszenie zadań sposobem drag&drop
 
 *
 Oddzielić QTreeWidget od MainWindow.
 m_taskView powinno byc oddzielna klasa z jej własnym interfejsem
 
 *
-Dodać widok służacy do wyswietlania informacji o działaniu programu
+Dodać widok służacy do diagnozy działania programu
+
+*
+Mozliwosc dodania notatki do zadania
 
 *
 Po klikniecu na ikonke w trayu okno powinno pokazac sie jak najblizej trayja,
@@ -22,12 +24,6 @@ Zapamietywanie wielkosci okna i innych ustawien
 *
 Opcja wyswietlania zadan aktywnych w aktualnej sesji.
 Prosty checkbox który zmienia widoki
-
-*
-Przenoszenie zadań sposobem drag&drop
-
-*
-Mozliwosc dodania notatki do zadania
 
 *
 Dodac mozliwosc przypisywania zadaniom ikonek. Ta opcja nie powinna byc zwiazana
