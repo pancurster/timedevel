@@ -1,4 +1,6 @@
 /** DEV_TODO **/
+*
+Aktywatory zmiany focusa powinny być przeniesione do kontrolera
 
 *
 Niektóre okna nie posiadaja pola WM_NAME(STRING) i nie można pobrać tytułu
