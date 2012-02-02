@@ -120,8 +120,10 @@ m_quitAction->setStatusTip(tr("Zakoncz"));
     toolbarQuit->addWidget(spacer);
     toolbarQuit->addAction(m_quitAction);
 
-    addToolBar(Qt::RightToolBarArea, toolbarMain);
-    addToolBar(Qt::RightToolBarArea, toolbarQuit);
+    addToolBar(Qt::TopToolBarArea, toolbarMain);
+    addToolBar(Qt::TopToolBarArea, toolbarQuit);
+
+    setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
 }
 
 void MainWindow::setConnections()
@@ -192,13 +194,19 @@ void MainWindow::processRemoveTask()
         if (ret == QMessageBox::Yes)
             emit orderRemoveTask(itemToRemove[0]->text(TASK_N_C));
     } else {
-        QMessageBox noTaskSelected;
-        noTaskSelected.setText(tr("Nie zaznaczono zadania do usuniecia"));
-        noTaskSelected.setWindowTitle(tr("Zaznacz zadanie"));
-        noTaskSelected.setIcon(QMessageBox::Information);
-        noTaskSelected.exec();
+        InfoMessageBox(tr("Zaznacz zadanie..."),
+                       tr("Nie zaznaczono zadania do usniecia"));
     }
     return;
+}
+
+void MainWindow::InfoMessageBox(const QString& windowTitle,const QString& info)
+{
+        QMessageBox infoBox;
+        infoBox.setWindowTitle(windowTitle);
+        infoBox.setText(info);
+        infoBox.setIcon(QMessageBox::Information);
+        infoBox.exec();
 }
 
 void MainWindow::processEditTaskName()
@@ -219,11 +227,8 @@ void MainWindow::processEditTaskName()
         return;
 
     } else {
-        QMessageBox noTaskSelected;
-        noTaskSelected.setText(tr("Nie zaznaczono zadania"));
-        noTaskSelected.setWindowTitle(tr("Zaznacz zadanie"));
-        noTaskSelected.setIcon(QMessageBox::Information);
-        noTaskSelected.exec();
+        InfoMessageBox(tr("Zaznacz zadanie..."),
+                       tr("Nie zaznaczono zadania do operacji zmiany nazwy"));
         return;
     }
 
@@ -384,7 +389,7 @@ void MainWindow::trayIconClicked(QSystemTrayIcon::ActivationReason reason)
     }
 }
 
-QString MainWindow::toMinSec(int wholeTime, const QString spliter)
+QString MainWindow::toMinSec(int wholeTime, const QString& spliter)
 {
     wholeTime /= 1000;
     int hour= wholeTime / 3600;

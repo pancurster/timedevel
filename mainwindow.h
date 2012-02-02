@@ -56,7 +56,9 @@ class MainWindow : public QMainWindow {
         QTreeWidgetItem* findItem(const QString& tName);
         QTreeWidgetItem* findItem(Task* t);
         QTreeWidgetItem* findTopLevelItem(const QString& taskName);
-        QString          toMinSec(int counter, const QString spliter = ":");
+
+        QString toMinSec(int counter, const QString& spliter = ":");
+        void    InfoMessageBox(const QString& windowTitle,const QString& info);
 
         QTreeWidget*     m_taskView;        //Main widget
         QSystemTrayIcon* m_trayIcon;        //Ikona w trayu

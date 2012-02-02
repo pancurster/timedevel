@@ -64,11 +64,13 @@ FindTaskDialog::FindTaskDialog(QTreeWidget* t, QWidget* parent) :
     setWindowTitle(tr("Szukaj zadania..."));
 
     connect(m_editTaskName, SIGNAL(textChanged(const QString&)),
-            this, SLOT(enableFindButton(const QString&)));
+            this, SLOT(enableFindButton()));
     connect(m_buttonSelect, SIGNAL(clicked()),
             this, SLOT(selectItemsAndDone()));
     connect(m_buttonFind, SIGNAL(clicked()), this, SLOT(findTask()));
     connect(m_buttonClose, SIGNAL(clicked()), this, SLOT(close()));
+    connect(m_comboAppName, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(enableFindButton()));
 
 }
 
@@ -85,7 +87,7 @@ FindTaskDialog::~FindTaskDialog()
     delete m_mainLayout;
 }
 
-void FindTaskDialog::enableFindButton(const QString&)
+void FindTaskDialog::enableFindButton()
 {
     if (!m_buttonFind->isEnabled())
         m_buttonFind->setEnabled(true);
@@ -114,12 +116,23 @@ void FindTaskDialog::findTask()
     m_listTask->clear();
     m_buttonFind->setEnabled(false);
     QString query = m_editTaskName->text();
+    bool comboBoxFilterActive = m_comboAppName->currentIndex() != 0;
 
-    bool finded = false;
-    QTreeWidgetItem* top;
-    QTreeWidgetItem* child;
+    bool finded = false;    // Wskazuje powodzenie lub niepowodzenie szukania
+    QTreeWidgetItem* top;   // Wskazuje glowne elementy na TreeWidget
+    QTreeWidgetItem* child; // Wskazuje pod-zadania/elementy na TreeWidget
+
+    // Iteracja po glownych elementach (TopLevelItems) TreeWidgeta
     for (int t = 0; t < treeWidget->topLevelItemCount(); ++t) {
         top = treeWidget->topLevelItem(t);
+
+        // Jesli filtr comboBoxa aktywny to trzeba dopasowac wybrany wzor
+        if (comboBoxFilterActive && top->text(2).compare(
+            m_comboAppName->currentText(), Qt::CaseInsensitive)) {
+
+            continue;
+        }
+
         if (top->text(1).contains(query, Qt::CaseInsensitive)) {
             m_listTask->addItem(top->text(1));
             finded = true;

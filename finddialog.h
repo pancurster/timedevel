@@ -24,7 +24,7 @@ class FindTaskDialog : public QDialog {
         QList<QListWidgetItem*> getReturnValue();
 
     private slots:
-        void enableFindButton(const QString&);
+        void enableFindButton();
         void findTask();
         void selectItemsAndDone();
 

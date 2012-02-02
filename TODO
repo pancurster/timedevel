@@ -7,28 +7,30 @@ Niektóre okna nie posiadaja pola WM_NAME(STRING) i nie można pobrać tytułu
 okna. Może lepiej odczytywać pole _NET_WM_NAME(...  ?
 
 *
+Oddzielić QTreeWidget od MainWindow.
+m_taskView powinno byc oddzielna klasa z jej własnym interfejsem
+
+*
 Dodać widok służacy do wyswietlania informacji o działaniu programu
 
 *
-Mozliwosc dodania notatki do zadania
-
-*
-Tlumaczenia: tr()
+Po klikniecu na ikonke w trayu okno powinno pokazac sie jak najblizej trayja,
+chyba że w trakcie sesji zostanie przeniesione.
 
 * UI
 Dodać pokazywanie liczby pod-zadań w liście zadań, lacznego czasu zadan.
 Dodać opcję pokazywania dodatkowych kolumn z informacjami o zadaniu.
+Zapamietywanie wielkosci okna i innych ustawien
 
 *
 Opcja wyswietlania zadan aktywnych w aktualnej sesji.
 Prosty checkbox który zmienia widoki
 
 *
-Oddzielić QTreeWidget od MainWindow.
-m_taskView powinno byc oddzielna klasa z jej własnym interfejsem
+Przenoszenie zadań sposobem drag&drop
 
 *
-Przenoszenie zadań sposobem drag&drop
+Mozliwosc dodania notatki do zadania
 
 *
 Dodac mozliwosc przypisywania zadaniom ikonek. Ta opcja nie powinna byc zwiazana
