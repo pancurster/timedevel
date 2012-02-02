@@ -11,6 +11,7 @@
 #include "mainwindow.h"
 #include "taskmanager.h"
 #include "focusdetector.h"
+#include "timeractivator.h"
 
 Timedevel::Timedevel(TaskManager* tm, MainWindow* view,
                      FocusDetector* fdo, QObject* parent):
@@ -22,6 +23,10 @@ Timedevel::Timedevel(TaskManager* tm, MainWindow* view,
     setTaskModel(tm);
     m_taskManager->readFromFile();
 
+    // Wejscia informujace o zmianie focusa
+    TimerActivator* m_timerActivator = new TimerActivator(20, this);
+    addFocusActivator(m_timerActivator);
+    addFocusActivator(m_focusDetector->signalHandle);
 }
 
 Timedevel::~Timedevel()

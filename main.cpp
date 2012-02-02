@@ -10,25 +10,20 @@
 int main(int argc, char* argv[])
 {
     QxtApplication timedevelapp(argc, argv);
-    MainWindow* mainWindow = new MainWindow;
-
-    // detektor focusa
     FocusDetector* fdo = new FocusDetector;
     timedevelapp.installNativeEventFilter(fdo);
-    TimerActivator* t_activator = new TimerActivator(20);
 
     // Singleton TaskManager
     TaskManager* tm = TaskManager::getInstance();
+    // Widok
+    MainWindow* mainWindow = new MainWindow;
     // controler-> setModel, setView
     Timedevel* taskControl = new Timedevel(tm, mainWindow, fdo);
-    taskControl->addFocusActivator(fdo->signalHandle);
-    taskControl->addFocusActivator(t_activator);
 
     mainWindow->show();
     int ret = timedevelapp.exec();
 
     delete taskControl;
-    delete t_activator;
     delete tm;
     delete mainWindow;
 

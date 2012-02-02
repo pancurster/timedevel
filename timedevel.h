@@ -7,6 +7,7 @@ class TaskManager;
 class MainWindow;
 class FocusDetector;
 class FocusActivator;
+class TimerActivator;
 
 class Timedevel : public QObject {
 
@@ -46,6 +47,7 @@ class Timedevel : public QObject {
         MainWindow* m_taskView;
 
         FocusDetector* m_focusDetector;
+        TimerActivator* m_timerActivator;
 };
 
 #endif // TIMEDEVEL_H
