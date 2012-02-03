@@ -11,6 +11,7 @@ Task::Task(WindowAttr* wa):
     m_taskName(wa->getWName()),
     m_appName(wa->getAppName()),
     m_elapsed(0),
+    m_childrenElapsed(0),
 
     /* Zero jesli to jest top level task */
     m_parentTask(0),
@@ -25,6 +26,7 @@ Task::Task(const QString taskName):
     m_taskName(taskName),
     m_appName(""),
     m_elapsed(0),
+    m_childrenElapsed(0),
     m_wattr(0),
     m_parentTask(0),
     m_childrenTask(new QList<Task*>)
@@ -35,16 +37,21 @@ Task::Task(const QString taskName):
 Task::Task(const QString taskName, const int t_elapsed):
     m_taskName(taskName),
     m_appName(""),
-    m_elapsed(t_elapsed),
+    m_elapsed(0),
+    m_childrenElapsed(0),
     m_wattr(0),
     m_parentTask(0),
     m_childrenTask(new QList<Task*>)
 {
+    setElapsed(t_elapsed);
     m_time = new QTime(0,0,0,0);
 }
 
 Task::~Task()
 {
+    if (hasParent()) {
+        getParent()->removeChildTask(this);
+    }
     delete m_wattr;
     delete m_time;
     delete m_childrenTask;
@@ -82,7 +89,13 @@ void Task::startTimer()
 
 void Task::stopTimer()
 {
-    m_elapsed += m_time->elapsed();
+    // Dodawnie delty czasu pod-zadania do pola sumujacego czasy dzieci 
+    // w zadaniu-rodzicu
+    int new_elapsed = m_time->elapsed();
+    if (hasParent())
+        getParent()->addChildTime(new_elapsed);
+
+    m_elapsed += new_elapsed;
 }
 
 bool Task::hasWAttr()
@@ -105,6 +118,7 @@ void Task::setParent(Task* t)
     // Jesli zadanie mialo rodzica to rodzic usuwa dziecko
     if (m_parentTask) {
         m_parentTask->removeChildTask(this);
+        m_parentTask->removeChildTime(t->getElapsedTime());
     }
 
     // Ustawia nowego rodzica
@@ -129,16 +143,26 @@ bool Task::hasParent()
 void Task::setElapsed(int elapsed)
 {
     m_elapsed = elapsed;
+
+    // Dodawanie czasu do czasu rodzica
+    if (hasParent())
+        getParent()->addChildTime(elapsed);
 }
 
-void Task::addChildTask(Task* t)
+void Task::addChildTask(Task* child)
 {
-    m_childrenTask->append(t);
+    m_childrenTask->append(child);
+
+    // Dodanie zadania zwieksza licznik czasu zadania rodzica
+    addChildTime(child->getElapsedTime());
 }
 
 void Task::removeChildTask(Task* t)
 {
     m_childrenTask->removeOne(t);
+
+    // Jesli usuwa sie pod-zadanie to nalezy tez usunac jego wklad w ElpasedTime
+    removeChildTime(t->getElapsedTime());
 }
 
 QList<Task*> Task::getChildren()
@@ -148,14 +172,16 @@ QList<Task*> Task::getChildren()
 
 int Task::getElpasedChildrenTime()
 {
-    if (m_childrenTask->isEmpty())
-        return 0;
+    return m_childrenElapsed;
+}
 
-    int sumTime = 0;
-    foreach(Task* t, *m_childrenTask) {
-        sumTime += t->getElapsedTime();
-    }
+void Task::addChildTime(int deltaTime)
+{
+    m_childrenElapsed += deltaTime;
+}
 
-    return sumTime;
+void Task::removeChildTime(int childElapsedTime)
+{
+    m_childrenElapsed -= childElapsedTime;
 }
 

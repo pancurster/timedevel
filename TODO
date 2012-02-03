@@ -1,5 +1,9 @@
 /** DEV_TODO **/
 *
+Cos nie tak z odswiezaniem czasu rodzica. Moze to blad w funkcji
+MainWindow::addTask w linijce 279, a może w Task::setActiveTask ?
+
+*
 Przenoszenie zadań sposobem drag&drop
 
 *

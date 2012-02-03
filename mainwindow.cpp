@@ -241,6 +241,7 @@ void MainWindow::addTask(Task* t)
     QList<QTreeWidgetItem*> result;
     QTreeWidgetItem* parentItem;
 
+    // Dodawanie zadania jako POD-ZADANIA
     if (t->hasParent()) {
         parentItem = findItem(t->getParent()->getTaskName());
 
@@ -251,13 +252,17 @@ void MainWindow::addTask(Task* t)
             return;
         }
 
+    // Dodawanie zadania jako ZADANIA-GLOWNEGO
     } else {
         item = new QTreeWidgetItem(m_taskView);
     }
 
-    QString time = toMinSec(t->getElapsedTime());
+
+    /* * * Ustawianie pol QTreeWidgetItem na podstawie Task* t * * */
+
+    int time = t->getElapsedTime();
     item->setText(TASK_N_C, t->getTaskName());
-    item->setText(ELAPS_C, time);
+    item->setText(ELAPS_C, toMinSec(time));
     item->setText(APP_N_C, t->getAppName());
     item->setIcon(ACTIVE_C, QIcon("icon/prior_not_known.png"));
 
@@ -269,12 +274,15 @@ void MainWindow::addTask(Task* t)
 
     if (t->hasParent() && parentItem) {
         parentItem->addChild(item);
+
+        // Trzeba odswiezyc tez czas zadania-rodzica
+        Task* parent = t->getParent();
+        int time = parent->getElapsedTime() + parent->getElpasedChildrenTime();
+        parentItem->setText(ELAPS_C, toMinSec(time));
     } else {
         item->setChildIndicatorPolicy(
                         QTreeWidgetItem::DontShowIndicatorWhenChildless);
         m_taskView->insertTopLevelItem(m_taskView->topLevelItemCount(), item);
-// Moze bedzie to opcja?        
-//        m_taskView->resizeColumnToContents(1);
     }
 
     qDebug() << Q_FUNC_INFO << "Dodano zadanie do widoku";

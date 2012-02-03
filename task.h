@@ -90,9 +90,13 @@ class Task {
         void stopTimer();
 
     private:
+        void addChildTime(int deltaTime);
+        void removeChildTime(int childElapsedTime);
+
         QString m_taskName; ///< Nazwa zadania/tytul okna.
         QString m_appName;  ///< Nazwa aplikacji powiazanej z zadaniem.
         int m_elapsed;      ///< Łączny czas spędzony na zadaniu.
+        int m_childrenElapsed;
         QTime* m_time;      ///< Liczy czas spedzony na zadaniu.
 
         WindowAttr* m_wattr;///< Jesli zadanie jest aplikacja, posiada atrybuty
