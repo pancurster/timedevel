@@ -1,38 +1,73 @@
-Timedevel application. Small task/time manager. Prevents wasting time on
-unimportant activities.
+Timedevel application
+=====================
 
-***
-DEV INFO
+Introduction
+------------
+Timedevel is a small task/time manager and user activity tracker. The main
+funcion is to capture active window and add this app to some group who represent
+a task. 
+This project is made primarily for training and educational reasons.
 
-1. Schemat organizacji programu:
+Right now application offers the following features:
 
-                        CONTROLER
-                        +-------------------+
-                        |  Timedevel        |
-                        |-------------------|
-             +----------+-m_taskManager     |
-             |          |                   |
-             |          |-m_mainWindow +------------------------+
-             |          |                   |                   |
-             |          |-m_focusDetector   |                   |
-             |          +-------------------+                   |
-MODEL        |              timedevel.h/cpp                     |
-+------------+---------+                            VIEW        |
-|    TaskManager       |                            +-----------+--------+
-|----------------------|                            |    MainWindow      |
-|+add(Task)            |         SIGNALS            |--------------------|
-|+remove(Task)         |<---------------------------+                    |
-|...                   |                            |GUI                 |
-|                      |                            |                    |
-|-writeToFile()        |                            |-m_taskView:QTreeWid|
-|-readFromFile()       |                            |                    |
-|...                   |                            |                    |
-|                      |                            |                    |
-+----------------------+                            +--------------------+
-  taskmanager.h/cpp                                    mainwindow.h/cpp
+  *  Capturing information about the active program/window, and log time
+     spent on task.
+  *  Adding, removing, renaming, adding to groups, reparenting tasks.
 
-2. Wszystkie błędy i niepoprawne działanie wysyłane na standardowe wyjście
-powinny być poprzedzone 3 spacjami i słowem "BLAD:" dla lepszej czytelności.
-Przykład:
-qDebug() << "   BLAD: ble ble";
+In future I plan to add the following features:
+
+  *  Filtering tasks with regular expression
+  *  Add support for the database to hold data
+  *  Add the CLI and Web user interfaces
+  *  Currently application works only on Linux/X11, so support for other 
+     operating systems and devices (where Qt works) is planned.
+
+
+Installation
+~~~~~~~~~~~~
+
+Actually timedevel has no simple instalator/package. To try it You need to
+download source code and compile by yourself.
+
+Downloading timedevel
+---------------------
+
+You can download source code directly from git respository::
+
+    http://github.com/pancurster/timedevel.git
+
+by clonign it::
+
+    $ git clone http://github.com/pancurster/timedevel.git
+
+Building
+--------
+
+To build application You need following libraries::
+
+.. _`Qt Library`: http://www.qt.nokia.com/products/
+.. _`Qxt Library`: http://www.dev.libqxt.org/libqxt/wiki/Home
+
+You need also X11 system headers
+
+If u have everythig just type::
+
+    $ qmake
+    $ make
+
+and::
+
+    $ ./timedevel
+
+If you are lucky program will start :)
+    
+Contact
+-------
+
+In case you have any questions or would like to make feature request, you can
+contact me through email
+
+    Lukasz Panek (pancurster@gmail.com)
+
+or by filing issues at github project pages.
 
