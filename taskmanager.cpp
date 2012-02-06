@@ -99,12 +99,11 @@ void TaskManager::setActiveTask(const QString& taskName)
         if (m_activeTask) {
             m_activeTask->stopTimer();
             emit taskElapsedTimeChanged(m_activeTask->getTaskName(),
-                                        m_activeTask->getElapsedTime());
+                                        m_activeTask->getAllElapsedTime());
             if (m_activeTask->hasParent()) {
                 emit taskElapsedTimeChanged(
                         m_activeTask->getParent()->getTaskName(),
-                        m_activeTask->getParent()->getElpasedChildrenTime()
-                        + m_activeTask->getParent()->getElapsedTime());
+                        m_activeTask->getParent()->getAllElapsedTime());
             }
         }
         m_activeTask = value(taskName);

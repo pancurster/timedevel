@@ -132,7 +132,10 @@ void Task::setParent(Task* t)
 
 Task* Task::getParent()
 {
-    return m_parentTask ? m_parentTask : this;
+    // Funkcja zawsze powinna zwrócić poprawna wartość
+    // Zeby sprawdzic poprawnosc wskaznika nalezy uzyc wczesniej hasParent()
+    Q_ASSERT(m_parentTask);
+    return m_parentTask;
 }
 
 bool Task::hasParent()
@@ -185,3 +188,7 @@ void Task::removeChildTime(int childElapsedTime)
     m_childrenElapsed -= childElapsedTime;
 }
 
+int Task::getAllElapsedTime()
+{
+    return m_elapsed + m_childrenElapsed;
+}
