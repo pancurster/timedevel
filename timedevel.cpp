@@ -12,12 +12,13 @@
 #include "taskmanager.h"
 #include "focusdetector.h"
 #include "timeractivator.h"
+#include "tasktreewidget.h"
 
 Timedevel::Timedevel(TaskManager* tm, MainWindow* view,
                      FocusDetector* fdo, QObject* parent):
     QObject(parent),
     m_taskManager(0),
-    m_taskView(view),
+    m_mainView(view),
     m_focusDetector(fdo)
 {
     setTaskModel(tm);
@@ -48,65 +49,76 @@ void Timedevel::removeFocusActivator(FocusActivator* f_activator)
 
 void Timedevel::setTaskModel(TaskManager* manager)
 {
+    // Jesli podano ten sam model, nie rob nic.
     if (m_taskManager == manager)
         return;
+
+    // Jesli jakis model jest juz aktywny, rozlacz
     if (m_taskManager) {
+
         // Wejscie z Modelu 
         disconnect(m_taskManager, SIGNAL(taskAdded(Task*)),
-                   m_taskView, SLOT(addTask(Task*)));
+                   m_mainView->getMainWidget(), SLOT(addTask(Task*)));
         disconnect(m_taskManager, SIGNAL(newActiveTask(Task*)),
-                   m_taskView, SLOT(newActiveTask(Task*)));
-        disconnect(m_taskManager, SIGNAL(taskElapsedTimeChanged(const QString&, int)),
-                   m_taskView, SLOT(refreshElapsedTime(const QString&, int)));
+                   m_mainView->getMainWidget(), SLOT(newActiveTask(Task*)));
+        disconnect(m_taskManager,
+                   SIGNAL(taskElapsedTimeChanged(const QString&, int)),
+                   m_mainView->getMainWidget(),
+                   SLOT(refreshElapsedTime(const QString&, int)));
         disconnect(m_taskManager, SIGNAL(taskRemoved(const QString&)),
-                   m_taskView, SLOT(removeTaskFromView(const QString&)));
+                   m_mainView->getMainWidget(),
+                   SLOT(removeTaskFromView(const QString&)));
 
         // Wejscie z Widoku
-        disconnect(m_taskView, SIGNAL(orderQuit()), qApp, SLOT(quit()));
-        disconnect(m_taskView, SIGNAL(orderLoad()),
-                m_taskManager, SLOT(readFromFile()));
-        disconnect(m_taskView, SIGNAL(orderSave()),
-                m_taskManager, SLOT(writeToFile()));
-        disconnect(m_taskView, SIGNAL(orderEditTaskName(const QString&,const QString&)),
+        disconnect(m_mainView, SIGNAL(orderQuit()), qApp, SLOT(quit()));
+        disconnect(m_mainView->getMainWidget(), 
+                SIGNAL(orderEditTaskName(const QString&,const QString&)),
                 m_taskManager, SLOT(setName(const QString&, const QString&)));
-        disconnect(m_taskView, SIGNAL(orderRemoveTask(const QString&)),
+        disconnect(m_mainView->getMainWidget(),
+                SIGNAL(orderRemoveTask(const QString&)),
                 m_taskManager, SLOT(remove(const QString&)));
-        disconnect(m_taskView, SIGNAL(orderNewTask(const QString&)),
+        disconnect(m_mainView->getMainWidget(),
+                SIGNAL(orderNewTask(const QString&)),
                 m_taskManager, SLOT(add(const QString&)));
-        disconnect(m_taskView, SIGNAL(offFocusDetector()),
+
+        disconnect(m_mainView->getMainWidget(), SIGNAL(offFocusDetector()),
                 this, SLOT(offFocusDetector()));
-        disconnect(m_taskView, SIGNAL(onFocusDetector()),
+        disconnect(m_mainView->getMainWidget(), SIGNAL(onFocusDetector()),
                 this, SLOT(onFocusDetector()));
     }
 
+    // Ustawianie nowego modelu
     m_taskManager = manager;
     if (m_taskManager) {
+
         // Wejscie z Modelu
         // przedrostek announce przy syg. wychodzacych z modelu ?
         connect(m_taskManager, SIGNAL(taskAdded(Task*)),
-                m_taskView, SLOT(addTask(Task*)));
+                m_mainView->getMainWidget(), SLOT(addTask(Task*)));
         connect(m_taskManager, SIGNAL(newActiveTask(Task*)),
-                m_taskView, SLOT(newActiveTask(Task*)));
-        connect(m_taskManager, SIGNAL(taskElapsedTimeChanged(const QString&, int)),
-                m_taskView, SLOT(refreshElapsedTime(const QString&, int)));
+                m_mainView->getMainWidget(), SLOT(newActiveTask(Task*)));
+        connect(m_taskManager,
+                SIGNAL(taskElapsedTimeChanged(const QString&, int)),
+                m_mainView->getMainWidget(),
+                SLOT(refreshElapsedTime(const QString&, int)));
         connect(m_taskManager, SIGNAL(taskRemoved(const QString&)),
-                m_taskView, SLOT(removeTaskFromView(const QString&)));
+                m_mainView->getMainWidget(),
+                SLOT(removeTaskFromView(const QString&)));
 
         // Wejscie z Widoku
-        connect(m_taskView, SIGNAL(orderQuit()), qApp, SLOT(quit()));
-        connect(m_taskView, SIGNAL(orderLoad()),
-                m_taskManager, SLOT(readFromFile()));
-        connect(m_taskView, SIGNAL(orderSave()),
-                m_taskManager, SLOT(writeToFile()));
-        connect(m_taskView, SIGNAL(orderEditTaskName(const QString&,const QString&)),
+        connect(m_mainView, SIGNAL(orderQuit()), qApp, SLOT(quit()));
+        connect(m_mainView->getMainWidget(),
+                SIGNAL(orderEditTaskName(const QString&,const QString&)),
                 m_taskManager, SLOT(setName(const QString&, const QString&)));
-        connect(m_taskView, SIGNAL(orderRemoveTask(const QString&)),
+        connect(m_mainView->getMainWidget(),
+                SIGNAL(orderRemoveTask(const QString&)),
                 m_taskManager, SLOT(remove(const QString&)));
-        connect(m_taskView, SIGNAL(orderNewTask(const QString&)),
+        connect(m_mainView->getMainWidget(),
+                SIGNAL(orderNewTask(const QString&)),
                 m_taskManager, SLOT(add(const QString&)));
-        connect(m_taskView, SIGNAL(offFocusDetector()),
+        connect(m_mainView->getMainWidget(), SIGNAL(offFocusDetector()),
                 this, SLOT(offFocusDetector()));
-        connect(m_taskView, SIGNAL(onFocusDetector()),
+        connect(m_mainView->getMainWidget(), SIGNAL(onFocusDetector()),
                 this, SLOT(onFocusDetector()));
     }
 }
@@ -123,7 +135,7 @@ void Timedevel::onFocusDetector()
 
 void Timedevel::setTaskView(MainWindow* taskviewer)
 {
-    m_taskView = taskviewer;
+    m_mainView = taskviewer;
 }
 
 void Timedevel::processFocusChange()

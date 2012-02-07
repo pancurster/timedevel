@@ -22,8 +22,6 @@ class Timedevel : public QObject {
         void setTaskModel(TaskManager* manager);
 
         /** Ustawia widok */
-        //TODO Kontener? Kilka widokow? (Ma byc wyswietlanie 
-        //statystyk jako grafiki.
         void setTaskView(MainWindow* taskviewer);
 
         void addFocusActivator(FocusActivator* f_activator);
@@ -44,7 +42,7 @@ class Timedevel : public QObject {
         /** MVC - model */
         TaskManager* m_taskManager;
         /** MVC - widok */
-        MainWindow* m_taskView;
+        MainWindow* m_mainView;
 
         FocusDetector* m_focusDetector;
         TimerActivator* m_timerActivator;

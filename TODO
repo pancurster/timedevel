@@ -6,7 +6,7 @@ Przenoszenie zadań sposobem drag&drop
 Dodać domyślne konstruktory i konst. kopiujące jako prywatne.
 Dodać explicit do kontrukorów z 1 arg.
 
-*
+* PRAWIE GOTOWE (w gałęzi refactoring)
 Oddzielić QTreeWidget od MainWindow.
 m_taskView powinno byc oddzielna klasa z jej własnym interfejsem
 
