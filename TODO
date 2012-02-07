@@ -1,18 +1,18 @@
 /** DEV_TODO **/
 *
-Cos nie tak z odswiezaniem czasu rodzica. Moze to blad w funkcji
-MainWindow::addTask w linijce 279, a może w Task::setActiveTask ?
+Przenoszenie zadań sposobem drag&drop
 
 *
-Przenoszenie zadań sposobem drag&drop
+Dodać domyślne konstruktory i konst. kopiujące jako prywatne.
+Dodać explicit do kontrukorów z 1 arg.
 
 *
 Oddzielić QTreeWidget od MainWindow.
 m_taskView powinno byc oddzielna klasa z jej własnym interfejsem
 
 *
-Dodać domyślne konstruktory i konst. kopiujące jako prywatne.
-Dodać explicit do kontrukorów z 1 arg.
+TaskManager raczej nie powinien dziedziczyć po QMap. Trzeba to zmienić na
+kompozycję ale coś się psuje. Na później.
 
 *
 Dodać widok służacy do diagnozy działania programu

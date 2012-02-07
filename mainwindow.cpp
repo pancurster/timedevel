@@ -72,6 +72,13 @@ void MainWindow::setUi()
     m_taskView->hideColumn(PID_C);
     m_taskView->hideColumn(WID_C);
     m_taskView->setExpandsOnDoubleClick(true);
+    m_taskView->setSortingEnabled(true);
+    m_taskView->setAlternatingRowColors(true);
+
+    m_taskView->setDragEnabled(true);
+    m_taskView->setDragDropMode(QAbstractItemView::InternalMove);
+    m_taskView->setDropIndicatorShown(true);
+
     m_taskView->setSelectionMode(QAbstractItemView::ExtendedSelection);
     mainLayout->addWidget(m_taskView);
 
