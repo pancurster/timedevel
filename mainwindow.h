@@ -23,6 +23,7 @@ class MainWindow : public QMainWindow {
         MainWindow(QWidget* parent = 0);
         ~MainWindow();
 
+        /// Handler dla kontrolera (polaczenia syg.)
         TaskTreeWidget* getMainWidget();
 
     private slots:
@@ -42,7 +43,7 @@ class MainWindow : public QMainWindow {
 
         TaskTreeWidget*  m_taskTreeWidget;  //Main widget
 
-        QSystemTrayIcon* m_trayIcon;        //Ikona w trayu
+        QSystemTrayIcon* m_trayIcon;
 
         QAction*         m_newTaskAction;
         QAction*         m_deleteTaskAction;
@@ -50,9 +51,6 @@ class MainWindow : public QMainWindow {
         QAction*         m_editTaskAction;
         QAction*         m_perferencesAction;
         QAction*         m_quitAction;
-
-//        enum {ACTIVE_C, TASK_N_C, APP_N_C, ELAPS_C,
-//              PID_C, WID_C} columnOrder;
 };
 
 #endif // MAINWINDOW_H

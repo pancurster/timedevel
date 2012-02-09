@@ -7,6 +7,7 @@ class Task;
 class QString;
 class QWidget;
 class QTreeWidgetItem;
+class QMainWindow;
 
 class TaskTreeWidget : public QTreeWidget {
 
@@ -50,6 +51,9 @@ class TaskTreeWidget : public QTreeWidget {
         QTreeWidgetItem* findItem(const QString& tName);
         QTreeWidgetItem* findItem(Task* t);
         QTreeWidgetItem* findTopLevelItem(const QString& taskName);
+
+        /// Zwraca poprawny wskaznik na QMainWindow
+        QMainWindow* getMainWindow();
 
         QString toMinSec(int counter, const QString& spliter = ":");
         void    InfoMessageBox(const QString& windowTitle,const QString& info);

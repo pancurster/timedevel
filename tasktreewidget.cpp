@@ -5,6 +5,8 @@
 #include <QWidget>
 #include <QTreeWidgetItem>
 #include <QMessageBox>
+//#include <QMainWindow>
+#include <QStatusBar>
 #include <QInputDialog>
 
 #include <QxtGui/QxtWindowSystem>
@@ -13,6 +15,7 @@
 #include "windowattr.h"
 #include "finddialog.h"
 #include "tasktreewidget.h"
+#include "mainwindow.h"
 
 TaskTreeWidget::TaskTreeWidget(QWidget* parent) :
     QTreeWidget(parent),
@@ -90,10 +93,10 @@ void TaskTreeWidget::newActiveTask(Task* t)
         font = m_activeItem->font(TASK_N_C);
         font.setBold(false);
         m_activeItem->setFont(TASK_N_C, font);
-// TODO
-//        parentWidget()->statusBar()->showMessage(
-//            QString(tr("Poprzednie aktywne zadanie: %1"))
-//            .arg(m_activeItem->text(TASK_N_C)));
+
+        getMainWindow()->statusBar()->showMessage(
+            QString(tr("Poprzednie aktywne zadanie: %1"))
+            .arg(m_activeItem->text(TASK_N_C)));
     }
 
     font = result->font(TASK_N_C);
@@ -234,10 +237,9 @@ void TaskTreeWidget::processFindTask()
     }
 
     this->setSelectionMode(QAbstractItemView::ExtendedSelection);
-// TODO
-//    QMainWindow* mainWindow;
-//    mainWindow = qobject_cast<QMainWindow*>(this->parentWidget());
-//    mainWindow->statusBar()->showMessage(QString(tr("Zaznaczono %1 zadania")).arg(i));
+
+    getMainWindow()->statusBar()->showMessage(
+            QString(tr("Zaznaczono %1 zadania")).arg(i));
 }
 
 QTreeWidgetItem* TaskTreeWidget::findItem(const QString& tName)
@@ -276,6 +278,11 @@ QTreeWidgetItem* TaskTreeWidget::findTopLevelItem(const QString& tName)
         return topEntity[0];
     else
         return 0;
+}
+
+QMainWindow* TaskTreeWidget::getMainWindow()
+{
+    return (QMainWindow*)QTreeWidget::parentWidget()->parentWidget();
 }
 
 void TaskTreeWidget::InfoMessageBox(const QString& windowTitle,const QString& info)
