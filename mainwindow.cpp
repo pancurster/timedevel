@@ -81,6 +81,7 @@ void MainWindow::setUi()
     m_taskTreeWidget->setAlternatingRowColors(true);
 
     m_taskTreeWidget->setDragEnabled(true);
+    m_taskTreeWidget->setAcceptDrops(true);
     m_taskTreeWidget->setDragDropMode(QAbstractItemView::InternalMove);
     m_taskTreeWidget->setDropIndicatorShown(true);
 

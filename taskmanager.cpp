@@ -93,6 +93,18 @@ void TaskManager::setElapsed(const QString& taskName, const int elapsed)
     emit taskChanged(t);
 }
 
+void
+TaskManager::reparent(const QString& taskToReparent, const QString& parentTask)
+{
+    Task* editTask = value(taskToReparent);
+    Task* newParentTask = 0;
+
+    if (parentTask != QString("No parent"))
+        newParentTask = value(parentTask);
+
+    editTask->setParent(newParentTask);
+}
+
 void TaskManager::setActiveTask(const QString& taskName)
 {
     if (!isEmpty() && contains(taskName)) {

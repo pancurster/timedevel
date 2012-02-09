@@ -22,6 +22,8 @@ class TaskManager : public QObject, public QMap<QString, Task*> {
         void remove(const QString& taskName);
         void setName(const QString& taskName, const QString& newName);
         void setElapsed(const QString& taskName, const int elapsed);
+        void reparent(const QString& taskToReparent, const QString& parentTask);
+
         void writeToFile();
         void readFromFile();
 

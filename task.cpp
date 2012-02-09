@@ -118,7 +118,6 @@ void Task::setParent(Task* t)
     // Jesli zadanie mialo rodzica to rodzic usuwa dziecko
     if (m_parentTask) {
         m_parentTask->removeChildTask(this);
-        m_parentTask->removeChildTime(t->getElapsedTime());
     }
 
     // Ustawia nowego rodzica

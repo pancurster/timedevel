@@ -80,6 +80,9 @@ void Timedevel::setTaskModel(TaskManager* manager)
         disconnect(m_mainView->getMainWidget(),
                 SIGNAL(orderNewTask(const QString&)),
                 m_taskManager, SLOT(add(const QString&)));
+        disconnect(m_mainView->getMainWidget(),
+                SIGNAL(orderReparent(const QString&, const QString&)),
+                m_taskManager, SLOT(reparent(const QString&, const QString&)));
 
         disconnect(m_mainView->getMainWidget(), SIGNAL(offFocusDetector()),
                 this, SLOT(offFocusDetector()));
@@ -116,6 +119,10 @@ void Timedevel::setTaskModel(TaskManager* manager)
         connect(m_mainView->getMainWidget(),
                 SIGNAL(orderNewTask(const QString&)),
                 m_taskManager, SLOT(add(const QString&)));
+        connect(m_mainView->getMainWidget(),
+                SIGNAL(orderReparent(const QString&, const QString&)),
+                m_taskManager, SLOT(reparent(const QString&, const QString&)));
+
         connect(m_mainView->getMainWidget(), SIGNAL(offFocusDetector()),
                 this, SLOT(offFocusDetector()));
         connect(m_mainView->getMainWidget(), SIGNAL(onFocusDetector()),

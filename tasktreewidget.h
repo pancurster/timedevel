@@ -45,8 +45,8 @@ class TaskTreeWidget : public QTreeWidget {
         void onFocusDetector();
 
     protected:
-        virtual bool dropMimeData(QTreeWidgetItem* parent, int index,
-                          const QMimeData* data, Qt::DropAction action);
+        virtual void dropEvent(QDropEvent* event);
+
     private:
         QTreeWidgetItem* findItem(const QString& tName);
         QTreeWidgetItem* findItem(Task* t);

@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <QTreeWidgetItem>
 #include <QMessageBox>
+#include <QDropEvent>
 //#include <QMainWindow>
 #include <QStatusBar>
 #include <QInputDialog>
@@ -139,19 +140,25 @@ void TaskTreeWidget::removeTaskFromView(const QString& taskName)
     Q_ASSERT(!"Nie znalezino zadania do usuniecia!?");
 }
 
-bool TaskTreeWidget::dropMimeData(QTreeWidgetItem* parent, int /*index*/,
-                                  const QMimeData* /*data*/, Qt::DropAction /*action*/)
+void TaskTreeWidget::dropEvent(QDropEvent* event)
 {
-    QString newParent = parent->text(TASK_N_C);
-
     QList<QTreeWidgetItem*> selectList;
     selectList = selectedItems();
-    QString taskToReparent = selectList.at(0)->text(TASK_N_C);
+    QString taskName = selectList.at(0)->text(TASK_N_C);
+    QString newParentName;
 
-    emit orderReparent(taskToReparent, newParent);
-    qDebug() << Q_FUNC_INFO<<taskToReparent<<"ma nowgo rodzica:"<<newParent;
+    QTreeWidgetItem* newParentItem = itemAt(event->pos());
+    if (newParentItem) {
+        newParentName = newParentItem->text(TASK_N_C);
+    } else {
+        newParentName = "No parent";
+    }
+    qDebug() << "Moved Task: "<<taskName<<" his new Parent is: "
+             <<newParentName;
 
-    return true;
+    emit orderReparent(taskName, newParentName);
+
+    QTreeWidget::dropEvent(event);
 }
 
 void TaskTreeWidget::processNewTask()
