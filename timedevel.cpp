@@ -1,4 +1,6 @@
 /* timedevel.cpp */
+#include <string>
+
 #include <QDebug>
 #include <QWidget>
 #include <QString>
@@ -19,10 +21,10 @@ Timedevel::Timedevel(TaskManager* tm, MainWindow* view,
     QObject(parent),
     m_taskManager(0),
     m_mainView(view),
-    m_focusDetector(fdo)
+    m_focusDetector(fdo),
+    m_taskFile("tasklist.xml")
 {
     setTaskModel(tm);
-    m_taskManager->readFromFile();
 
     // Wejscia informujace o zmianie focusa
     TimerActivator* m_timerActivator = new TimerActivator(20, this);
@@ -32,7 +34,7 @@ Timedevel::Timedevel(TaskManager* tm, MainWindow* view,
 
 Timedevel::~Timedevel()
 {
-    m_taskManager->writeToFile();
+    m_taskManager->writeToFile(m_taskFile);
 }
 
 void Timedevel::addFocusActivator(FocusActivator* f_activator)
@@ -177,3 +179,17 @@ int Timedevel::getActiveWId()
     return QxtWindowSystem::activeWindow();
 }
 
+void Timedevel::setTaskFile(const std::string& taskfile)
+{
+    m_taskFile = QString::fromStdString(taskfile);
+}
+
+void Timedevel::readTaskFile()
+{
+    m_taskManager->readFromFile(m_taskFile);
+}
+
+void Timedevel::writeTaskFile()
+{
+    m_taskManager->writeToFile(m_taskFile);
+}

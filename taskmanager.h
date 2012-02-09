@@ -24,8 +24,8 @@ class TaskManager : public QObject, public QMap<QString, Task*> {
         void setElapsed(const QString& taskName, const int elapsed);
         void reparent(const QString& taskToReparent, const QString& parentTask);
 
-        void writeToFile();
-        void readFromFile();
+        void writeToFile(const QString& fileName);
+        void readFromFile(const QString& fileName);
 
     signals:
         void taskAdded(Task*);

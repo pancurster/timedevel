@@ -134,16 +134,16 @@ Task* TaskManager::getActive()
 }
 
 /* TODO Dodac obsluge bledow. Wtedy parametr writeDone bedzie mial sens */
-void TaskManager::writeToFile()
+void TaskManager::writeToFile(const QString& fileName)
 {
-    TaskListWriter taskWriter(this, "tasklist.xml");
+    TaskListWriter taskWriter(this, fileName);
     if ( !taskWriter.write() )
         emit writeDone(true);
 }
 
-void TaskManager::readFromFile()
+void TaskManager::readFromFile(const QString& fileName)
 {
-    TaskListReader taskReader(this, "tasklist.xml");
+    TaskListReader taskReader(this, fileName);
     this->clear();
     if ( !taskReader.read() )
         emit readDone(true);

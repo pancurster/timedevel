@@ -2,6 +2,7 @@
 #define TIMEDEVEL_H
 
 #include <QObject>
+#include <QString>
 
 class TaskManager;
 class MainWindow;
@@ -23,6 +24,10 @@ class Timedevel : public QObject {
 
         /** Ustawia widok */
         void setTaskView(MainWindow* taskviewer);
+
+        void setTaskFile(const std::string& taskfile);
+        void readTaskFile();
+        void writeTaskFile();
 
         void addFocusActivator(FocusActivator* f_activator);
         void removeFocusActivator(FocusActivator* f_activator);
@@ -46,6 +51,8 @@ class Timedevel : public QObject {
 
         FocusDetector* m_focusDetector;
         TimerActivator* m_timerActivator;
+
+        QString m_taskFile;
 };
 
 #endif // TIMEDEVEL_H
