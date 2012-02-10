@@ -17,14 +17,16 @@
 #include "tasktreewidget.h"
 
 Timedevel::Timedevel(TaskManager* tm, MainWindow* view,
-                     FocusDetector* fdo, QObject* parent):
-    QObject(parent),
-    m_taskManager(0),
-    m_mainView(view),
-    m_focusDetector(fdo),
-    m_taskFile("tasklist.xml")
+                     FocusDetector* fdo, OptionsMap* opt, QObject* parent)
+    : QObject(parent)
+    , m_taskManager(0)
+    , m_mainView(view)
+    , m_focusDetector(fdo)
+    , m_taskFile("tasklist.xml")
 {
     setTaskModel(tm);
+    parseOptions(opt);
+    readTaskFile();
 
     // Wejscia informujace o zmianie focusa
     TimerActivator* m_timerActivator = new TimerActivator(20, this);
@@ -34,7 +36,7 @@ Timedevel::Timedevel(TaskManager* tm, MainWindow* view,
 
 Timedevel::~Timedevel()
 {
-    m_taskManager->writeToFile(m_taskFile);
+    writeTaskFile();
 }
 
 void Timedevel::addFocusActivator(FocusActivator* f_activator)
@@ -177,6 +179,14 @@ void Timedevel::processFocusChange()
 int Timedevel::getActiveWId()
 {
     return QxtWindowSystem::activeWindow();
+}
+
+void Timedevel::parseOptions(OptionsMap* options)
+{
+    // Plik do odczytywania / zapisywania zadań
+    std::string a = boost::get<std::string>((*options)[Options::TASKFILE]);
+    if (! a.empty())
+        m_taskFile = QString(a.c_str());
 }
 
 void Timedevel::setTaskFile(const std::string& taskfile)

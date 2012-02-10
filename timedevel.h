@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QString>
 
+#include "options_parsing.h"
+
 class TaskManager;
 class MainWindow;
 class FocusDetector;
@@ -16,7 +18,7 @@ class Timedevel : public QObject {
 
     public:
         Timedevel(TaskManager* tm, MainWindow* view,
-                  FocusDetector* fdo, QObject* parent = 0);
+                  FocusDetector* fdo, OptionsMap* opt, QObject* parent = 0);
         ~Timedevel();
 
         /** Ustawia model danych */
@@ -43,6 +45,9 @@ class Timedevel : public QObject {
     private:
         /** Ma pobierac info o oknie. Narazie zle dziala :) */
         int getActiveWId();
+
+        /// Ustawieia programu z CLI
+        void parseOptions(OptionsMap* options);
 
         /** MVC - model */
         TaskManager* m_taskManager;
