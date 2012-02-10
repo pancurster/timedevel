@@ -184,7 +184,7 @@ int Timedevel::getActiveWId()
 void Timedevel::parseOptions(OptionsMap* options)
 {
     // Plik do odczytywania / zapisywania zadań
-    std::string a = boost::get<std::string>((*options)[Options::TASKFILE]);
+    std::string& a = boost::get<std::string>((*options)[Options::TASKFILE]);
     if (! a.empty())
         m_taskFile = QString(a.c_str());
 }
