@@ -1,6 +1,8 @@
 #ifndef TIMEDEVEL_H
 #define TIMEDEVEL_H
 
+#include <memory>
+
 #include <QObject>
 #include <QString>
 
@@ -17,8 +19,11 @@ class Timedevel : public QObject {
     Q_OBJECT
 
     public:
-        Timedevel(TaskManager* tm, MainWindow* view,
-                  FocusDetector* fdo, OptionsMap* opt, QObject* parent = 0);
+        Timedevel(TaskManager* tm,
+                  MainWindow* view,
+                  FocusDetector* fdo,
+                  std::auto_ptr<Options> opt,
+                  QObject* parent = 0);
         ~Timedevel();
 
         /** Ustawia model danych */

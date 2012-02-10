@@ -1,4 +1,6 @@
 /* main.cpp */
+#include <memory>
+
 #include <QxtGui/QxtApplication>
 
 #include "mainwindow.h"
@@ -11,8 +13,8 @@
 
 int main(int argc, char* argv[])
 {
-    Options local_options(argc, argv);
-    if (local_options.parse())
+    std::auto_ptr<Options> local_options(new Options(argc, argv));
+    if (local_options->parse())
         return 1;
 
     QxtApplication timedevelapp(argc, argv);
@@ -26,9 +28,7 @@ int main(int argc, char* argv[])
     MainWindow* mainWindow = new MainWindow;
 
     // controler-> setModel, setView
-    Timedevel* taskControl = new Timedevel(tm, mainWindow, fdo,
-                                           local_options.getOptions())
-    ;
+    Timedevel* taskControl = new Timedevel(tm, mainWindow, fdo, local_options);
 
     mainWindow->show();
     int ret = timedevelapp.exec();

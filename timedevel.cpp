@@ -16,8 +16,12 @@
 #include "timeractivator.h"
 #include "tasktreewidget.h"
 
-Timedevel::Timedevel(TaskManager* tm, MainWindow* view,
-                     FocusDetector* fdo, OptionsMap* opt, QObject* parent)
+Timedevel::Timedevel(TaskManager* tm,
+                     MainWindow* view,
+                     FocusDetector* fdo,
+                     std::auto_ptr<Options> opt,
+                     QObject* parent)
+
     : QObject(parent)
     , m_taskManager(0)
     , m_mainView(view)
@@ -25,7 +29,7 @@ Timedevel::Timedevel(TaskManager* tm, MainWindow* view,
     , m_taskFile("tasklist.xml")
 {
     setTaskModel(tm);
-    parseOptions(opt);
+    parseOptions(opt->getOptions());
     readTaskFile();
 
     // Wejscia informujace o zmianie focusa
