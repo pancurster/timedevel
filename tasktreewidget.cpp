@@ -32,7 +32,7 @@ void TaskTreeWidget::addTask(Task* t)
 {
     QTreeWidgetItem* item = 0;
     QList<QTreeWidgetItem*> result;
-    QTreeWidgetItem* parentItem;
+    QTreeWidgetItem* parentItem = 0;
 
     // Dodawanie zadania jako POD-ZADANIA
     if (t->hasParent()) {

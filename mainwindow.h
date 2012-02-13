@@ -14,6 +14,7 @@ class QHBoxLayout;
 class QGridLayout;
 class QSystemTrayIcon;
 class QTreeWidgetItem;
+class QCloseEvent;
 
 class MainWindow : public QMainWindow {
 
@@ -40,6 +41,8 @@ class MainWindow : public QMainWindow {
         void setUi();
         void setToolbar();
         void setConnections();
+        void readSettings();
+        void writeSettings();
 
         TaskTreeWidget*  m_taskTreeWidget;  //Main widget
 

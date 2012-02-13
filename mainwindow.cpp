@@ -20,6 +20,7 @@
 #include <QAction>
 #include <QMessageBox>
 #include <QInputDialog>
+#include <QSettings>
 
 #include <QxtGui/QxtWindowSystem>
 
@@ -38,10 +39,12 @@ MainWindow::MainWindow(QWidget* parent):
     setUi();
     setToolbar();
     setConnections();
+    readSettings();
 }
 
 MainWindow::~MainWindow()
 {
+    writeSettings();
 }
 
 TaskTreeWidget* MainWindow::getMainWidget()
@@ -155,6 +158,26 @@ void MainWindow::setConnections()
 
     connect(m_trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
             this, SLOT(trayIconClicked(QSystemTrayIcon::ActivationReason)));
+}
+
+void MainWindow::writeSettings()
+{
+    QSettings settings("Timedevel application", "timedevel");
+
+    settings.beginGroup("MainWindow");
+    settings.setValue("size", size());
+    settings.setValue("pos", pos());
+    settings.endGroup();
+}
+
+void MainWindow::readSettings()
+{
+    QSettings settings("Timedevel application", "timedevel");
+
+    settings.beginGroup("MainWindow");
+    resize(settings.value("size", QSize(800, 450)).toSize());
+    move(settings.value("pos", QPoint(50,50)).toPoint());
+    settings.endGroup();
 }
 
 void MainWindow::trayIconClicked(QSystemTrayIcon::ActivationReason reason)

@@ -45,8 +45,9 @@ Building
 
 To build application You need following libraries::
 
-.. _`Qt Library`: http://www.qt.nokia.com/products/
-.. _`Qxt Library`: http://www.dev.libqxt.org/libqxt/wiki/Home
+.. _Qt Library: http://www.qt.nokia.com/products/
+.. _Qxt Library: http://www.dev.libqxt.org/libqxt/wiki/Home
+.. _Boost Library: http://www.boost.org/
 
 You need also X11 system headers
 

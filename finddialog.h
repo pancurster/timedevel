@@ -43,6 +43,7 @@ class FindTaskDialog : public QDialog {
         QComboBox*   m_comboAppName;
         QListWidget* m_listTask;
         QHBoxLayout* m_mainLayout;
+
 };
 
 #endif // FIND_DIALOG_H

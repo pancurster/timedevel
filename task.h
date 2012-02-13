@@ -102,6 +102,11 @@ class Task {
                             ///< okna (PID, WId itp).
         Task* m_parentTask; ///< Wskaźnik do zadania nadrzędnego/rodzica.
         QList<Task*>* m_childrenTask;
+
+        //SECURE
+        Task();
+        Task(const Task&);
+        Task& operator=(const Task&);
 };
 
 #endif // TASK_H
